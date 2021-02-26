@@ -1,2 +1,2 @@
 # gmanual
-GTK+ GUI for man pages
+A GTK+ GUI browser for man pages developed using Vala.
