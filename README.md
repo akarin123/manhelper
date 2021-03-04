@@ -1,2 +1,2 @@
 # manhelper
-A GTK+ GUI browser for man pages developed using Vala.
+A lightweight GUI frontend for man2html developed using Vala and GTK.
