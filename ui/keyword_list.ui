@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Generated with glade 3.22.1 -->
+<interface>
+  <requires lib="gtk+" version="3.20"/>
+  <template class="ManHelperKeywordList" parent="GtkWindow">
+    <property name="can_focus">False</property>
+    <property name="resizable">False</property>
+    <property name="skip_taskbar_hint">True</property>
+    <property name="skip_pager_hint">True</property>
+    <property name="decorated">False</property>
+    <child>
+      <placeholder/>
+    </child>
+    <child>
+      <object class="GtkMenuBar" id="keywordbar">
+        <property name="visible">True</property>
+        <property name="can_focus">False</property>
+        <property name="pack_direction">ttb</property>
+        <property name="child_pack_direction">ttb</property>
+      </object>
+    </child>
+  </template>
+</interface>
