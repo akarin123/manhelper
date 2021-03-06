@@ -2,9 +2,10 @@
  * Authored by: XX Wu <xwuanhkust@gmail.com>
  */
 
-/* This is the application */
+
 namespace ManHelper
 {
+    /* This is the application */
     public class App:Gtk.Application
     {    
         public uint section_num_max {get;default=9;}
@@ -28,7 +29,7 @@ namespace ManHelper
     public class MainWin:Gtk.ApplicationWindow
     {
         private const string app_title = "Man Helper";
-        private string init_uri;
+        private string home_uri;
         internal int height_header;
         internal uint section_num_max;
         internal string last_entry_text {get;set;default="";}        
@@ -54,9 +55,9 @@ namespace ManHelper
             view.button_press_event.connect(on_view_mouse_press);
             scrolled.add_with_properties(view);
             
-            //string init_uri = "https://man7.org/linux/man-pages/man1/man.1.html";     
-            init_uri = "http://localhost/cgi-bin/man/man2html";
-            view.load_uri(init_uri);  
+            //string home_uri = "https://man7.org/linux/man-pages/man1/man.1.html";     
+            home_uri = "http://localhost/cgi-bin/man/man2html";
+            view.load_uri(home_uri);  
             //keyword_menu = new KeywordMenu("");
             //print(last_width.to_string());
             search_list = new KeywordList(this,"man",400);
@@ -366,6 +367,25 @@ namespace ManHelper
                     return false;
             }
         }
+        
+        [GtkCallback]
+        void on_btn_back_clicked(Gtk.Button self)
+        {
+            this.view.go_back();
+        }
+        
+        [GtkCallback]
+        void on_btn_fwd_clicked(Gtk.Button self)
+        {
+            this.view.go_forward();
+        }
+
+        [GtkCallback]
+        void on_btn_home_clicked(Gtk.Button self)
+        {
+            this.view.load_uri(this.home_uri);
+        }
+    
     }
 
     [GtkTemplate (ui = "/ui/about_dialog.ui")]
@@ -465,7 +485,7 @@ namespace ManHelper
     }
 }
 
-int main(string[] args)
+public static int main(string[] args)
 {   
     var app = new ManHelper.App();
 

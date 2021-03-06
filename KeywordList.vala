@@ -1,6 +1,14 @@
+/*-
+ * Authored by: XX Wu <xwuanhkust@gmail.com>
+ */
+
+/*
+1. need to implement up and down keybindings for the search list
+*/
+
 namespace ManHelper
 {   
-    //Add search list for browsed man pages
+    //Add search list for man pages
     [GtkTemplate (ui = "/ui/keyword_list.ui")]
     private class KeywordList:Gtk.Window
     //private class SearchWindow:Gtk.Menu

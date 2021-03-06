@@ -1,4 +1,4 @@
-project('manhelper', 'vala', 'c', version: '0.01')
+project('manhelper', 'vala', 'c', version: '0.02')
 
 #cc = meson.get_compiler('c')
 #m_dep = cc.find_library('m', required : false)
@@ -20,5 +20,5 @@ dependencies = [
     #m_dep,
 ]
 
-sources = files('Application.vala','KeywordList.vala')
+sources = files('Application.vala','KeywordList.vala','Bookmark.vala')
 executable(meson.project_name(), sources, gresources, dependencies: dependencies)
