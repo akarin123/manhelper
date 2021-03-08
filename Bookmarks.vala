@@ -13,35 +13,113 @@ namespace ManHelper
         [GtkChild]
         Gtk.TreeView bookmarks_view;
 
+        MainWin win;
         Gtk.ListStore list_store;
         Gtk.TreeIter list_iter;
 
-        public BookmarksDialog()
+        public BookmarksDialog(MainWin win)
         {
-            list_store = new Gtk.ListStore(2,Type.STRING,Type.STRING);
-            //list_store.iter
+            this.win = win;
+            list_store = new Gtk.ListStore(1,Type.STRING);
+
+            /*
             list_store.append(out list_iter);
-            //var get_iter_res = list_store.get_iter_first(out list_iter);    
-            //print(get_iter_res.to_string());
-            list_store.set(list_iter,0,"good",1,"good morning");
-            //list_store.append(out list_iter);
-            
+            list_store.set(list_iter,0,"good morning!");
+            list_store.append(out list_iter);
+            list_store.set(list_iter,0,"good afternoon!");
+            */
+
             bookmarks_view.set_model(list_store);
             var column = new Gtk.TreeViewColumn();
 
             var title = new Gtk.CellRendererText();
-            var author = new Gtk.CellRendererText();
+            //var intro = new Gtk.CellRendererText();
             
             column.pack_start(title, true);
-            column.pack_start(author, true);
-            
-            column.add_attribute(title, "text", 0);
-            column.add_attribute(author, "text", 1);
-            
-            bookmarks_view.append_column(column);            
+            column.set_attributes(title, "text", 0);
+
+            bookmarks_view.append_column(column);       
+      
+            var query = new SelectQuery();
+            query.connection = win.bookmarks_db.connection;
+            //win.bookmarks_db.show_data(query);
+            try
+            {
+                var contents = query.get_table_contents();
+
+                var len_bookmarks = contents.get_n_rows();
+
+                //print(@"$(len_bookmarks) bookmarks\n");
+                for (var ii=0;ii<len_bookmarks;ii++)
+                {
+                    list_store.append(out list_iter);
+                    list_store.set(list_iter,0,contents.get_value_at(0,ii).get_string());
+                    //print("%s,%s\n",contents.get_value_at(0,ii).get_string(),contents.get_value_at(1,ii).get_string());
+                }
+            }
+            catch (Error e)
+            {
+                message(e.message);
+            }
+                 
             //bookmarks_view.add_child();
         }
+
+        [GtkCallback]
+        private void on_btn_load_clicked(Gtk.Button self)
+        {            
+            var query = new SelectQuery();
+            query.connection = win.bookmarks_db.connection;
+            Gtk.TreeModel tree_model;
+            Gtk.TreeIter tree_iter;
+            bool selected;
+            //win.bookmarks_db.show_data(query);
+            var selection = this.bookmarks_view.get_selection();
+            selected = selection.get_selected(out tree_model, out tree_iter);
+
+            if (selected)
+            {
+                try
+                {
+                    Value title_v;
+                    //string title_v;
+                    tree_model.get_value(tree_iter,0,out title_v);
+
+                    SList<Value?> title_list = new SList<Value>();
+                    print("title: %s\n",title_v.get_string());
+                    title_list.append(title_v);
+
+                    //title_list.append("man");
+                    var contents = query.get_table_contents();
+                    var row_num = contents.get_row_from_values(title_list,{0});
+                    print(@"row num: $(row_num)\n");
+                    print(contents.get_value_at(1,row_num).get_string()+"\n");
+
+                    var uri = contents.get_value_at(1,row_num).get_string();
+                    this.win.view.load_uri(uri);
+                    //var len_bookmarks = contents.get_n_rows();
+
+                    //print(@"$(len_bookmarks) bookmarks\n");
+
+                    //list_store.append(out list_iter);
+                    //list_store.set(list_iter,0,contents.get_value_at(0,0).get_string());
+                        //print("%s,%s\n",contents.get_value_at(0,ii).get_string(),contents.get_value_at(1,ii).get_string());
+                }
+                catch (Error e)
+                {
+                    message(e.message);
+                }
+            }
+        }
+    
+        [GtkCallback]
+        private void on_btn_delete_clicked(Gtk.Button self)
+        {
+            //need implementation
+            //this.destroy();
+        }    
 	}
+    
 
     private class SelectQuery : Object 
     {
@@ -52,14 +130,14 @@ namespace ManHelper
         
         public Gda.DataModel get_table_contents () throws Error requires (this.connection.is_opened())
         {
-            print("Building query...\n");
+            //print("Building query...\n");
             /* Build select query */
             var builder = new Gda.SqlBuilder(Gda.SqlStatementType.SELECT);
             builder.select_add_field (this.field, null, null);
             builder.select_add_target(this.table, null);
 
             var statement = builder.get_statement();
-            print("Executing...\n");
+            //print("Executing...\n");
             return this.connection.statement_execute_select(statement, null);
         }
     }
@@ -79,9 +157,9 @@ namespace ManHelper
             {
                 this.open();
                 this.create_tables();  
-                var q = new SelectQuery();
-                q.connection = this.connection;
-                this.show_data(q);
+                //var q = new SelectQuery();
+                //q.connection = this.connection;
+                //this.show_data(q);
                 //bookmarks_db.create_tables();               
             }
             catch (Error e)
@@ -92,35 +170,38 @@ namespace ManHelper
 
         public void open() throws Error 
         {
-                print("Opening Database connection...\n");
+                //print("Opening Database connection...\n");
                 this.connection = Gda.Connection.open_from_string (null, this.db_file, null, Gda.ConnectionOptions.NONE);
         }
 
         /* Create a bookmark table */
         public void create_tables() throws Error requires (this.connection.is_opened())
         {
-                print("Creating table...\n");
+                //print("Creating table...\n");
                 this.run_query("CREATE TABLE IF NOT EXISTS bookmarks (title string PRIMARY KEY,uri string)");
 
         }
         
         public int run_query (string query) throws Error requires (this.connection.is_opened())
         {
-                print(@"Executing query: [$(query)]\n");
+                //print(@"Executing query: [$(query)]\n");
                 return this.connection.execute_non_select_command (query);
         }
 
+        /*
         public void show_data (SelectQuery query) throws Error requires (this.connection.is_opened())
         {
             try 
             {
                 var contents = query.get_table_contents();
-                print("Table: '%s'\n%s", query.table, contents.dump_as_string());
+                
+                //print("Table: '%s'\n%s", query.table, contents.dump_as_string());
+                //print("Table: \n%s", contents.dump_as_string());
             }
             catch  (GLib.Error e)
             {
                 message(e.message);
             }
-        }
-}
+        }*/
+    }
 }

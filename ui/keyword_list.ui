@@ -4,8 +4,10 @@
   <requires lib="gtk+" version="3.20"/>
   <template class="ManHelperKeywordList" parent="GtkWindow">
     <property name="can_focus">False</property>
+    <property name="type">popup</property>
     <property name="resizable">False</property>
     <property name="destroy_with_parent">True</property>
+    <property name="type_hint">popup-menu</property>
     <property name="skip_taskbar_hint">True</property>
     <property name="skip_pager_hint">True</property>
     <property name="decorated">False</property>

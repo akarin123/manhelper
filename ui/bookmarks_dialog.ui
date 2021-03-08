@@ -27,6 +27,7 @@
                 <property name="receives_default">True</property>
                 <property name="margin_left">5</property>
                 <property name="margin_right">5</property>
+                <signal name="clicked" handler="on_btn_load_clicked" swapped="no"/>
               </object>
               <packing>
                 <property name="expand">True</property>
@@ -35,13 +36,14 @@
               </packing>
             </child>
             <child>
-              <object class="GtkButton" id="btn_close">
-                <property name="label" translatable="yes">Close</property>
+              <object class="GtkButton" id="btn_delete">
+                <property name="label" translatable="yes">Delete</property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="receives_default">True</property>
                 <property name="margin_left">5</property>
                 <property name="margin_right">5</property>
+                <signal name="clicked" handler="on_btn_delete_clicked" swapped="no"/>
               </object>
               <packing>
                 <property name="expand">True</property>
@@ -69,6 +71,7 @@
               <object class="GtkTreeView" id="bookmarks_view">
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
+                <property name="headers_visible">False</property>
                 <child internal-child="selection">
                   <object class="GtkTreeSelection"/>
                 </child>

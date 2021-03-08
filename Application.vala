@@ -39,7 +39,9 @@ namespace ManHelper
         //private Gda.Connection bookmarks_db = null;
         //private string bookmarks_file = "./bookmarks";
         public string bookmarks_file {set;get;default="SQLite://DB_DIR=.;DB_NAME=bookmarks";}
-        private DataBase bookmarks_db = null;
+        internal DataBase bookmarks_db = null;
+        internal BookmarksDialog bookmarks_dialog = null;
+
         [GtkChild]
         private Gtk.Button btn_man;
         [GtkChild]
@@ -93,15 +95,6 @@ namespace ManHelper
             return (height_header+1);
         }
 
-        //private HashTable<string,string>? load_bookmarks(string bookmarks_file)
-        private Gda.Connection load_bookmarks(string bookmarks_file)
-        {
-			/*need implementation here*/
-            var file = Gda.Connection.open_from_string(null,bookmarks_file,null,Gda.ConnectionOptions.NONE);
-
-            return file;
-        }
-
         [GtkCallback]
         private void on_btn_man_clicked(Gtk.Button self)
         {
@@ -118,8 +111,6 @@ namespace ManHelper
             }
 
             this.last_entry_text = entry_text;
-
-
             entry_data = entry_text.split(".");
 
             if (entry_data.length == 1)
@@ -202,7 +193,6 @@ namespace ManHelper
 
                 if (old_list.get_realized())
                 {
-                    //old_list.destroy();
                     Timeout.add(150,()=>{old_list.destroy();return false;}); // add a 150 ms delay
                     //print("destroy old list\n");
                 }
@@ -212,7 +202,7 @@ namespace ManHelper
                 if (this.search_list.find_num>0)
                 {
                     this.search_list.show_all();
-                    //this.search_list.move(x,y);
+
                     this.present();
                     //print("show new list\n");
                 }
@@ -224,7 +214,6 @@ namespace ManHelper
                 if (this.search_list.get_realized())
                     this.search_list.destroy();
             }
-            
 
         }
 
@@ -424,6 +413,7 @@ namespace ManHelper
 
             try
             {
+                //print(@"VALUES (\"$(title)\", \"$(uri)\")\n");
                 this.bookmarks_db.run_query(@"REPLACE INTO bookmarks (title, uri) VALUES (\"$(title)\", \"$(uri)\")");
             }
             catch (Error e)
@@ -437,11 +427,18 @@ namespace ManHelper
         [GtkCallback]
         void on_btn_bookmarks_clicked(Gtk.Button self)
         {
-            BookmarksDialog bookmarks_dialog;
+            //BookmarksDialog bookmarks_dialog;
+            if ((this.bookmarks_dialog == null)||(!this.bookmarks_dialog.get_realized()))
+            {
+                this.bookmarks_dialog = new BookmarksDialog(this);
+                this.bookmarks_dialog.show_all();
+            }
+            else
+            {
+                this.bookmarks_dialog.show_all();
+                return;
+            }
 
-            bookmarks_dialog = new BookmarksDialog();
-
-            bookmarks_dialog.show_all();
         }        
     }
 
@@ -454,7 +451,7 @@ namespace ManHelper
 
             try 
             {
-                dialog_pixbuf = new Gdk.Pixbuf.from_resource("/ui/icon.png");
+                dialog_pixbuf = new Gdk.Pixbuf.from_resource("/ui/icon_manhelper.png");
                 dialog_pixbuf = dialog_pixbuf.scale_simple(128,128,Gdk.InterpType.TILES);
                 this.logo=dialog_pixbuf;
             } 

@@ -104,7 +104,9 @@ namespace ManHelper
             this.move(this.x_list,this.y_list);
             Timeout.add(150,update_keyword_list_geom);
             //Idle.add(update_keyword_list_position);
-            this.set_keep_above(true);
+
+            //this.set_keep_above(true);
+            this.set_transient_for(win);
         }
 
         private void calculate_keyword_list_pos(MainWin win, out int x, out int y)
