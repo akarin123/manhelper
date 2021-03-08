@@ -21,8 +21,11 @@
     <property name="width_request">500</property>
     <property name="height_request">-1</property>
     <property name="can_focus">False</property>
+    <property name="title" translatable="yes">Search</property>
     <property name="resizable">False</property>
     <property name="type_hint">dialog</property>
+    <signal name="close" handler="gtk_widget_destroy" swapped="no"/>
+    <signal name="response" handler="gtk_widget_destroy" swapped="no"/>
     <child>
       <placeholder/>
     </child>
@@ -39,6 +42,21 @@
             <property name="layout_style">end</property>
             <child>
               <object class="GtkButton">
+                <property name="label" translatable="yes">Clear</property>
+                <property name="visible">True</property>
+                <property name="can_focus">True</property>
+                <property name="receives_default">True</property>
+                <property name="image">image_clear</property>
+                <signal name="clicked" handler="on_clear_clicked" swapped="no"/>
+              </object>
+              <packing>
+                <property name="expand">True</property>
+                <property name="fill">True</property>
+                <property name="position">0</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkButton">
                 <property name="label" translatable="yes">Find Prev.</property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
@@ -49,7 +67,7 @@
               <packing>
                 <property name="expand">True</property>
                 <property name="fill">True</property>
-                <property name="position">0</property>
+                <property name="position">1</property>
               </packing>
             </child>
             <child>
@@ -60,21 +78,6 @@
                 <property name="receives_default">True</property>
                 <property name="image">image_next</property>
                 <signal name="clicked" handler="on_find_next_clicked" swapped="no"/>
-              </object>
-              <packing>
-                <property name="expand">True</property>
-                <property name="fill">True</property>
-                <property name="position">1</property>
-              </packing>
-            </child>
-            <child>
-              <object class="GtkButton">
-                <property name="label" translatable="yes">Clear</property>
-                <property name="visible">True</property>
-                <property name="can_focus">True</property>
-                <property name="receives_default">True</property>
-                <property name="image">image_clear</property>
-                <signal name="clicked" handler="on_clear_clicked" swapped="no"/>
               </object>
               <packing>
                 <property name="expand">True</property>

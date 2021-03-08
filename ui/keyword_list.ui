@@ -5,18 +5,38 @@
   <template class="ManHelperKeywordList" parent="GtkWindow">
     <property name="can_focus">False</property>
     <property name="resizable">False</property>
+    <property name="destroy_with_parent">True</property>
     <property name="skip_taskbar_hint">True</property>
     <property name="skip_pager_hint">True</property>
     <property name="decorated">False</property>
+    <signal name="key-press-event" handler="escape_key_destroy" swapped="no"/>
+    <signal name="key-release-event" handler="escape_key_destroy" swapped="no"/>
     <child>
       <placeholder/>
     </child>
     <child>
-      <object class="GtkMenuBar" id="keywordbar">
+      <object class="GtkScrolledWindow" id="keywordscrolled">
         <property name="visible">True</property>
-        <property name="can_focus">False</property>
-        <property name="pack_direction">ttb</property>
-        <property name="child_pack_direction">ttb</property>
+        <property name="can_focus">True</property>
+        <property name="shadow_type">in</property>
+        <child>
+          <object class="GtkViewport">
+            <property name="visible">True</property>
+            <property name="can_focus">False</property>
+            <property name="shadow_type">none</property>
+            <child>
+              <object class="GtkMenuBar" id="keywordmenu">
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <property name="pack_direction">ttb</property>
+                <property name="child_pack_direction">ttb</property>
+                <signal name="key-press-event" handler="key_up_and_down" swapped="no"/>
+                <signal name="key-release-event" handler="key_up_and_down" swapped="no"/>
+                <signal name="leave-notify-event" handler="mouse_leave_keyword_list" swapped="no"/>
+              </object>
+            </child>
+          </object>
+        </child>
       </object>
     </child>
   </template>

@@ -17,6 +17,16 @@
     <property name="can_focus">False</property>
     <property name="stock">gtk-home</property>
   </object>
+  <object class="GtkImage" id="image_index">
+    <property name="visible">True</property>
+    <property name="can_focus">False</property>
+    <property name="stock">gtk-index</property>
+  </object>
+  <object class="GtkImage" id="image_plus">
+    <property name="visible">True</property>
+    <property name="can_focus">False</property>
+    <property name="stock">gtk-add</property>
+  </object>
   <template class="ManHelperMainWin" parent="GtkApplicationWindow">
     <property name="width_request">400</property>
     <property name="can_focus">False</property>
@@ -110,29 +120,8 @@
                             <property name="use_underline">True</property>
                             <property name="use_stock">True</property>
                             <signal name="activate" handler="on_find_clicked" swapped="no"/>
-                            <accelerator key="f" signal="activate" modifiers="GDK_SHIFT_MASK | GDK_CONTROL_MASK"/>
                             <accelerator key="f" signal="activate" modifiers="GDK_CONTROL_MASK"/>
-                          </object>
-                        </child>
-                      </object>
-                    </child>
-                  </object>
-                </child>
-                <child>
-                  <object class="GtkMenuItem">
-                    <property name="visible">True</property>
-                    <property name="can_focus">False</property>
-                    <property name="label" translatable="yes">Bookmark(_M)</property>
-                    <property name="use_underline">True</property>
-                    <child type="submenu">
-                      <object class="GtkMenu">
-                        <property name="visible">True</property>
-                        <property name="can_focus">False</property>
-                        <child>
-                          <object class="GtkMenuItem">
-                            <property name="visible">True</property>
-                            <property name="can_focus">False</property>
-                            <property name="label" translatable="yes">Home</property>
+                            <accelerator key="f" signal="activate" modifiers="GDK_SHIFT_MASK | GDK_CONTROL_MASK"/>
                           </object>
                         </child>
                       </object>
@@ -227,17 +216,36 @@
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkButton" id="btn_mark">
+                  <object class="GtkButton" id="btn_add_bookmark">
                     <property name="width_request">50</property>
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="receives_default">True</property>
+                    <property name="margin_left">5</property>
+                    <property name="margin_right">5</property>
                     <property name="image">image_plus</property>
+                    <signal name="clicked" handler="on_btn_add_bookmark_clicked" swapped="no"/>
                   </object>
                   <packing>
                     <property name="expand">False</property>
                     <property name="fill">True</property>
                     <property name="position">3</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkButton" id="btn_bookmarks">
+                    <property name="visible">True</property>
+                    <property name="can_focus">True</property>
+                    <property name="receives_default">True</property>
+                    <property name="margin_left">5</property>
+                    <property name="margin_right">5</property>
+                    <property name="image">image_index</property>
+                    <signal name="clicked" handler="on_btn_bookmarks_clicked" swapped="no"/>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="fill">True</property>
+                    <property name="position">4</property>
                   </packing>
                 </child>
               </object>
@@ -259,6 +267,7 @@
           <object class="GtkBox">
             <property name="visible">True</property>
             <property name="can_focus">False</property>
+            <property name="margin_top">2</property>
             <child>
               <object class="GtkSearchEntry" id="entry_search">
                 <property name="visible">True</property>
@@ -320,9 +329,4 @@
       </object>
     </child>
   </template>
-  <object class="GtkImage" id="image_plus">
-    <property name="visible">True</property>
-    <property name="can_focus">False</property>
-    <property name="stock">gtk-add</property>
-  </object>
 </interface>

@@ -28,24 +28,27 @@ namespace ManHelper
     [GtkTemplate (ui = "/ui/manhelper.ui")]
     public class MainWin:Gtk.ApplicationWindow
     {
-        private const string app_title = "Man Helper";
+        public const string app_title = "Man Helper";
         private string home_uri;
-        internal int height_header;
         internal uint section_num_max;
+        internal int height_header;
         internal string last_entry_text {get;set;default="";}        
         internal KeywordList search_list = null;
         internal Gtk.FileChooserDialog file_chooser = null;
-
+        //private HashTable<string,string> bookmarks_table;
+        //private Gda.Connection bookmarks_db = null;
+        //private string bookmarks_file = "./bookmarks";
+        public string bookmarks_file {set;get;default="SQLite://DB_DIR=.;DB_NAME=bookmarks";}
+        private DataBase bookmarks_db = null;
         [GtkChild]
         private Gtk.Button btn_man;
         [GtkChild]
-        private Gtk.SearchEntry entry_search;
+        internal Gtk.SearchEntry entry_search;
         [GtkChild]
-        private Gtk.ScrolledWindow scrolled;
+        internal Gtk.ScrolledWindow scrolled;
 
         internal WebKit.WebView view; 
         
-
         internal MainWin(App app)
         {
             Object(application: app,title: app_title);
@@ -58,15 +61,19 @@ namespace ManHelper
             //string home_uri = "https://man7.org/linux/man-pages/man1/man.1.html";     
             home_uri = "http://localhost/cgi-bin/man/man2html";
             view.load_uri(home_uri);  
-            //keyword_menu = new KeywordMenu("");
-            //print(last_width.to_string());
-            search_list = new KeywordList(this,"man",400);
+
+            search_list = new KeywordList(this,"man");
             search_list.show_all();
             search_list.hide();
+
             height_header = guess_height_headerbar();
+
+            //bookmarks_db = load_bookmarks(this.bookmarks_file);
+            this.bookmarks_db = new DataBase("./","bookmarks");
+
         }
 
-        // guess the height of title bar
+        /* guess the height of title bar*/
         private int guess_height_headerbar()
         {
             int height_header = 50;
@@ -84,6 +91,15 @@ namespace ManHelper
             window_temp.destroy();
             //print(@"$(height_header)\n");
             return (height_header+1);
+        }
+
+        //private HashTable<string,string>? load_bookmarks(string bookmarks_file)
+        private Gda.Connection load_bookmarks(string bookmarks_file)
+        {
+			/*need implementation here*/
+            var file = Gda.Connection.open_from_string(null,bookmarks_file,null,Gda.ConnectionOptions.NONE);
+
+            return file;
         }
 
         [GtkCallback]
@@ -159,14 +175,15 @@ namespace ManHelper
             }
         }
         
-        
         [GtkCallback]
         private void on_entry_search_changed(Gtk.SearchEntry self)
         {
             string text = self.get_text();
             const int long_cmd = 6;
+            //List<Gtk.MenuItem> menu_items; 
+            KeywordList old_list;
 
-            int width = self.get_allocated_width();
+            //int width = self.get_allocated_width();
             //int height = self.get_allocated_height();
             int x_root,y_root,x_rel,y_rel;
             int x,y;
@@ -181,18 +198,25 @@ namespace ManHelper
 
             if (text.length>long_cmd)
             {
-                if (this.search_list.get_realized())
-                    this.search_list.destroy();
-    
-                this.search_list = new KeywordList(this,text,width);
+                old_list = this.search_list;
+
+                if (old_list.get_realized())
+                {
+                    //old_list.destroy();
+                    Timeout.add(150,()=>{old_list.destroy();return false;}); // add a 150 ms delay
+                    //print("destroy old list\n");
+                }
+
+                this.search_list = new KeywordList(this,text);
 
                 if (this.search_list.find_num>0)
                 {
                     this.search_list.show_all();
-                    this.search_list.move(x,y);
+                    //this.search_list.move(x,y);
                     this.present();
-                    //print("show all\n");
+                    //print("show new list\n");
                 }
+
 
             }
             else
@@ -213,29 +237,13 @@ namespace ManHelper
         [GtkCallback]
         private bool on_view_mouse_press(Gtk.Widget self,Gdk.EventButton evnt)
         {
-            //print("here");
             if (this.search_list.get_realized())
             {
-                //print("destroy\n");
                 this.search_list.destroy();
             }
 
             return false;
         }
-
-        /*
-        [GtkCallback]
-        private bool on_window_configured(Gtk.Widget self,Gdk.Event evnt)
-        {
-            print("here");
-            if (this.search_list.get_realized())
-            {
-                //print("destroy\n");
-                this.search_list.destroy();
-            }
-
-            return false;
-        }*/
 
         [GtkCallback]
         private void on_quit_clicked(Gtk.MenuItem self)
@@ -258,9 +266,13 @@ namespace ManHelper
             var focus = this.get_focus();
 
             if (focus==this.view)
+            {
                 this.view.execute_editing_command("Copy");
+            }
             else if (focus==this.entry_search)
+            {
                 this.entry_search.copy_clipboard();
+            }
         }
 
         [GtkCallback]
@@ -273,6 +285,7 @@ namespace ManHelper
             Regex regex_html;
             bool save_succeed = false;
             string file_extension = ".mhtml";
+            string title = this.view.title;
 
             try
             {
@@ -285,17 +298,27 @@ namespace ManHelper
 
                 return;
             }
-
+            
             if (this.file_chooser == null)
+            {
                 this.file_chooser = new Gtk.FileChooserDialog("Save as",null,Gtk.FileChooserAction.SAVE);
+            }
 
-            file_chooser.set_current_name(this.last_entry_text+file_extension);
-            save_resp = file_chooser.run();
+            if (this.last_entry_text!="")
+            {
+                this.file_chooser.set_current_name(this.last_entry_text+file_extension);
+            }
+            else
+            {
+                this.file_chooser.set_current_name((title??"new")+file_extension);                
+            }
+
+            save_resp = this.file_chooser.run();
             //print(save_resp.to_string()+"\n");
             
             if (save_resp == Gtk.ResponseType.ACCEPT)
             {
-                filepath = file_chooser.get_filename();
+                filepath = this.file_chooser.get_filename();
 
                 file = File.new_for_path(filepath);
 
@@ -322,7 +345,7 @@ namespace ManHelper
 
             }       
             
-            file_chooser.hide();
+            this.file_chooser.hide();
         }
 
         [GtkCallback]
@@ -362,9 +385,13 @@ namespace ManHelper
                 //print(@"status code: $(status_code)\n");
 
                 if (status_code<400)
+                {
                     return true;
+                }
                 else 
+                {
                     return false;
+                }
             }
         }
         
@@ -385,7 +412,37 @@ namespace ManHelper
         {
             this.view.load_uri(this.home_uri);
         }
-    
+
+        [GtkCallback]
+        void on_btn_add_bookmark_clicked(Gtk.Button self)
+        {
+            string title;
+            string uri;
+
+            title = this.view.get_title()??"NULL";
+            uri = this.view.get_uri();
+
+            try
+            {
+                this.bookmarks_db.run_query(@"REPLACE INTO bookmarks (title, uri) VALUES (\"$(title)\", \"$(uri)\")");
+            }
+            catch (Error e)
+            {
+                message(e.message);
+            }
+            //this.bookmarks_table.insert(uri,title);
+           //self.set_image(new Gtk.Image.from_gicon(new ThemedIcon("user-bookmarks"),Gtk.IconSize.BUTTON));
+        }
+
+        [GtkCallback]
+        void on_btn_bookmarks_clicked(Gtk.Button self)
+        {
+            BookmarksDialog bookmarks_dialog;
+
+            bookmarks_dialog = new BookmarksDialog();
+
+            bookmarks_dialog.show_all();
+        }        
     }
 
     [GtkTemplate (ui = "/ui/about_dialog.ui")]
@@ -434,12 +491,9 @@ namespace ManHelper
         {
             get
             {
-                if (option_case.get_active())
-                    _option = _option|WebKit.FindOptions.CASE_INSENSITIVE;
+                _option = (option_case.get_active()?WebKit.FindOptions.CASE_INSENSITIVE:WebKit.FindOptions.NONE)|
+                            (option_wrap.get_active()?WebKit.FindOptions.WRAP_AROUND:WebKit.FindOptions.NONE);
 
-                if (option_wrap.get_active())
-                    _option = _option|WebKit.FindOptions.WRAP_AROUND;
-                
                 return _option;
             }
         }
@@ -456,7 +510,7 @@ namespace ManHelper
             //print(find_text);
 
             if (find_text!="")
-                find_control.search(find_text,this.option,1000);
+                find_control.search(find_text,this.option,1024);
         }
 
         [GtkCallback]
@@ -470,7 +524,7 @@ namespace ManHelper
             //print(find_text);
 
             if (find_text!="")
-                find_control.search(find_text,this.option|WebKit.FindOptions.BACKWARDS,1000);
+                find_control.search(find_text,this.option|WebKit.FindOptions.BACKWARDS,1024);
         }
 
         [GtkCallback]
@@ -482,6 +536,7 @@ namespace ManHelper
 
             find_control.search_finish();
         }
+
     }
 }
 

@@ -4,6 +4,7 @@
   <requires lib="gtk+" version="3.20"/>
   <template class="ManHelperAboutDialog" parent="GtkAboutDialog">
     <property name="can_focus">False</property>
+    <property name="resizable">False</property>
     <property name="type_hint">dialog</property>
     <property name="program_name">Man Helper</property>
     <property name="copyright" translatable="yes">Copyright © 2021 XX Wu.</property>

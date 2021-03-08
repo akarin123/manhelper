@@ -3,8 +3,9 @@
   <gresource prefix="/ui">
     <file preprocess="xml-stripblanks">manhelper.ui</file>
     <file preprocess="xml-stripblanks">search_dialog.ui</file>
-    <file preprocess="xml-stripblanks">about_dialog.ui</file>
+    <file preprocess="xml-stripblanks">bookmarks_dialog.ui</file>
     <file preprocess="xml-stripblanks">keyword_list.ui</file>
-    <file>icon.png</file>
+    <file preprocess="xml-stripblanks">about_dialog.ui</file>
+    <file>icon_manhelper.png</file>
   </gresource>
 </gresources>
