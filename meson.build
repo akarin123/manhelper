@@ -1,4 +1,4 @@
-project('manhelper', 'vala', 'c', version: '0.02')
+project('manhelper', 'vala', 'c', version: '0.03')
 
 #cc = meson.get_compiler('c')
 #m_dep = cc.find_library('m', required : false)
