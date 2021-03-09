@@ -5,7 +5,8 @@ project('manhelper', 'vala', 'c', version: '0.03')
 gnome = import('gnome')
 
 gresources = gnome.compile_resources(
-    meson.project_name()+'_resources', 'ui/manhelper.gresource.xml',
+    meson.project_name()+'_resources', 
+    'ui/manhelper.gresource.xml',
     c_name: 'resources',
     source_dir:['ui']
 )
@@ -23,5 +24,15 @@ dependencies = [
     #m_dep,
 ]
 
-sources = files('Application.vala','KeywordList.vala','Bookmarks.vala')
-executable(meson.project_name(), sources, gresources, dependencies: dependencies)
+sources = files('Application.vala',
+                'KeywordList.vala',
+                'Bookmarks.vala',
+                'MultiTabs.vala',)
+
+app = executable(meson.project_name(), 
+                 sources,
+                 gresources, 
+                 dependencies: dependencies, 
+                 install: true)
+
+meson.add_install_script('./startup_script.sh')

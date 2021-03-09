@@ -22,13 +22,6 @@ namespace ManHelper
             this.win = win;
             list_store = new Gtk.ListStore(1,Type.STRING);
 
-            /*
-            list_store.append(out list_iter);
-            list_store.set(list_iter,0,"good morning!");
-            list_store.append(out list_iter);
-            list_store.set(list_iter,0,"good afternoon!");
-            */
-
             bookmarks_view.set_model(list_store);
             var column = new Gtk.TreeViewColumn();
 
@@ -103,13 +96,6 @@ namespace ManHelper
                     this.win.view.load_uri(uri);
 
                     title_v.unset();
-                    //var len_bookmarks = contents.get_n_rows();
-
-                    //print(@"$(len_bookmarks) bookmarks\n");
-
-                    //list_store.append(out list_iter);
-                    //list_store.set(list_iter,0,contents.get_value_at(0,0).get_string());
-                        //print("%s,%s\n",contents.get_value_at(0,ii).get_string(),contents.get_value_at(1,ii).get_string());
                 }
                 catch (Error e)
                 {
@@ -144,7 +130,8 @@ namespace ManHelper
 
                     bookmarks_db.run_query(@"DELETE FROM bookmarks WHERE title = \"$(title)\""); 
                     ((Gtk.ListStore)tree_model).remove(ref tree_iter);
-
+                    
+                    title_v.unset();
                 }
                 catch (Error e)
                 {
@@ -161,9 +148,9 @@ namespace ManHelper
 	}
     
 
-    private class SelectQuery : Object 
+    private class SelectQuery:Object 
     {
-		/* "*" in SQL matches any number of any characters*/
+		/* "*" in SQL matches any number of any characters */
         public string field { set; get; default = "*"; } 
         public string table { set; get; default = "bookmarks"; }
         public Gda.Connection connection { set; get; }
@@ -182,7 +169,7 @@ namespace ManHelper
         }
     }
 
-    class DataBase : Object 
+    internal class DataBase:Object 
     {
         /* Using defaults will search a SQLite database located at current directory called bookmarks.db*/
         public string provider { set; get; default = "SQLite"; }
@@ -208,6 +195,38 @@ namespace ManHelper
             }
         }
 
+        public static void init_database_directory(App app)
+        {
+            var home_dir = Environment.get_home_dir();
+
+            if (home_dir!=null)
+            {
+                //print(home_dir+"\n");
+                var bookmarks_dirpath = home_dir+app.bookmarks_directory;
+                
+                if (FileUtils.test(bookmarks_dirpath, FileTest.IS_DIR))
+                {
+                    app.bookmarks_parent_dir = home_dir;
+                }
+                else
+                {
+                    var file_temp = File.new_for_path(bookmarks_dirpath);
+                    try
+                    {
+                        if (file_temp.make_directory(null))
+                        {
+                            app.bookmarks_parent_dir = home_dir;
+                        }
+                    }
+                    catch (Error e)
+                    {
+                        message(e.message);
+                    }
+                    
+
+                }
+            }
+        }
         public void open() throws Error 
         {
                 //print("Opening Database connection...\n");
