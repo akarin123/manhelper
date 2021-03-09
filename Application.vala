@@ -9,12 +9,18 @@ namespace ManHelper
     public class App:Gtk.Application
     {    
         public uint section_num_max {get;default=9;}
+        public MainWin win;
+        public string bookmarks_file {set;get;default="SQLite://DB_DIR=.;DB_NAME=bookmarks";}
+        internal DataBase bookmarks_db = null;
+        
         protected override void activate()
         {   
             //print("Before\n");
             var app_win = new MainWin(this);
             //app_win.icon = new Gdk.Pixbuf.from_file ("icon.png");
             app_win.show_all();
+
+            this.win = app_win;
             //print("After!\n");
         }
 
@@ -28,19 +34,22 @@ namespace ManHelper
     [GtkTemplate (ui = "/ui/manhelper.ui")]
     public class MainWin:Gtk.ApplicationWindow
     {
-        public const string app_title = "Man Helper";
+        public App app;     
+        public const string main_title = "Man Helper";
         private string home_uri;
-        internal uint section_num_max;
+        //internal uint section_num_max;
         internal int height_header;
-        internal string last_entry_text {get;set;default="";}        
+        internal string last_entry_text {get;set;default="";} 
         internal KeywordList search_list = null;
         internal Gtk.FileChooserDialog file_chooser = null;
+        internal BookmarksDialog bookmarks_dialog = null;
         //private HashTable<string,string> bookmarks_table;
         //private Gda.Connection bookmarks_db = null;
         //private string bookmarks_file = "./bookmarks";
-        public string bookmarks_file {set;get;default="SQLite://DB_DIR=.;DB_NAME=bookmarks";}
-        internal DataBase bookmarks_db = null;
-        internal BookmarksDialog bookmarks_dialog = null;
+        
+        //public string bookmarks_file {set;get;default="SQLite://DB_DIR=.;DB_NAME=bookmarks";}
+        //internal DataBase bookmarks_db = null;
+        //internal BookmarksDialog bookmarks_dialog = null;
 
         [GtkChild]
         private Gtk.Button btn_man;
@@ -53,9 +62,9 @@ namespace ManHelper
         
         internal MainWin(App app)
         {
-            Object(application: app,title: app_title);
-            section_num_max = app.section_num_max;
-
+            Object(application: app,title: main_title);
+            //section_num_max = app.section_num_max;
+            this.app = app;
             view = new WebKit.WebView();  
             view.button_press_event.connect(on_view_mouse_press);
             scrolled.add_with_properties(view);
@@ -71,7 +80,7 @@ namespace ManHelper
             height_header = guess_height_headerbar();
 
             //bookmarks_db = load_bookmarks(this.bookmarks_file);
-            this.bookmarks_db = new DataBase("./","bookmarks");
+            this.app.bookmarks_db = new DataBase("./","bookmarks");
 
         }
 
@@ -85,7 +94,7 @@ namespace ManHelper
             window_temp.width_request = this.default_width;
             window_temp.height_request = this.default_height;
             header.show_close_button = true;
-            header.title = app_title;
+            header.title = MainWin.main_title;
             window_temp.set_titlebar(header);
             window_temp.show_all();
             
@@ -99,9 +108,9 @@ namespace ManHelper
         private void on_btn_man_clicked(Gtk.Button self)
         {
             string entry_text = entry_search.get_text();
-            Thread<bool>[] thread = new Thread<bool>[section_num_max];
-            bool[] status = new bool[section_num_max];
-            man_uri[] man_uri_test = new man_uri[section_num_max];
+            Thread<bool>[] thread = new Thread<bool>[this.app.section_num_max];
+            bool[] status = new bool[this.app.section_num_max];
+            man_uri[] man_uri_test = new man_uri[this.app.section_num_max];
             bool entry_found = false;
             string[] entry_data;
             if ((entry_text=="")||(entry_text==this.last_entry_text))
@@ -115,14 +124,14 @@ namespace ManHelper
 
             if (entry_data.length == 1)
             {
-                for (var ii = 1; ii<(section_num_max+1); ii++)
+                for (var ii = 1; ii<(this.app.section_num_max+1); ii++)
                 {
                     man_uri_test[ii-1] = new man_uri(entry_text,ii.to_string());
 
                     thread[ii-1] = new Thread<bool>("man"+ii.to_string()+"_uri_exist", man_uri_test[ii-1].man_uri_exist);
                 }
 
-                for (var ii = 1; ii<(section_num_max+1); ii++)
+                for (var ii = 1; ii<(this.app.section_num_max+1); ii++)
                 {
                     status[ii-1] = thread[ii-1].join();
                     //print("Inner, the status is "+status[ii-1].to_string()+"\n");
@@ -414,7 +423,8 @@ namespace ManHelper
             try
             {
                 //print(@"VALUES (\"$(title)\", \"$(uri)\")\n");
-                this.bookmarks_db.run_query(@"REPLACE INTO bookmarks (title, uri) VALUES (\"$(title)\", \"$(uri)\")");
+                var bookmarks_db = this.app.bookmarks_db;
+                bookmarks_db.run_query(@"REPLACE INTO bookmarks (title, uri) VALUES (\"$(title)\", \"$(uri)\")");
             }
             catch (Error e)
             {

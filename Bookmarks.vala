@@ -41,7 +41,8 @@ namespace ManHelper
             bookmarks_view.append_column(column);       
       
             var query = new SelectQuery();
-            query.connection = win.bookmarks_db.connection;
+            var bookmarks_db = win.app.bookmarks_db;
+            query.connection = bookmarks_db.connection;
             //win.bookmarks_db.show_data(query);
             try
             {
@@ -61,7 +62,8 @@ namespace ManHelper
             {
                 message(e.message);
             }
-                 
+            
+            this.set_transient_for(win);
             //bookmarks_view.add_child();
         }
 
@@ -69,7 +71,10 @@ namespace ManHelper
         private void on_btn_load_clicked(Gtk.Button self)
         {            
             var query = new SelectQuery();
-            query.connection = win.bookmarks_db.connection;
+            var bookmarks_db = this.win.app.bookmarks_db;
+            
+            query.connection = bookmarks_db.connection;
+            
             Gtk.TreeModel tree_model;
             Gtk.TreeIter tree_iter;
             bool selected;
@@ -82,7 +87,6 @@ namespace ManHelper
                 try
                 {
                     Value title_v;
-                    //string title_v;
                     tree_model.get_value(tree_iter,0,out title_v);
 
                     SList<Value?> title_list = new SList<Value>();
@@ -92,11 +96,13 @@ namespace ManHelper
                     //title_list.append("man");
                     var contents = query.get_table_contents();
                     var row_num = contents.get_row_from_values(title_list,{0});
-                    print(@"row num: $(row_num)\n");
-                    print(contents.get_value_at(1,row_num).get_string()+"\n");
+                    //print(@"row num: $(row_num)\n");
+                    //print(contents.get_value_at(1,row_num).get_string()+"\n");
 
                     var uri = contents.get_value_at(1,row_num).get_string();
                     this.win.view.load_uri(uri);
+
+                    title_v.unset();
                     //var len_bookmarks = contents.get_n_rows();
 
                     //print(@"$(len_bookmarks) bookmarks\n");
@@ -115,8 +121,42 @@ namespace ManHelper
         [GtkCallback]
         private void on_btn_delete_clicked(Gtk.Button self)
         {
-            //need implementation
-            //this.destroy();
+            var query = new SelectQuery();
+            var bookmarks_db = this.win.app.bookmarks_db;
+            
+            query.connection = bookmarks_db.connection;
+            
+            Gtk.TreeModel tree_model;
+            Gtk.TreeIter tree_iter;
+            bool selected;
+            //win.bookmarks_db.show_data(query);
+            var selection = this.bookmarks_view.get_selection();
+            selected = selection.get_selected(out tree_model, out tree_iter);
+
+            if (selected)
+            {
+                try
+                {
+                    Value title_v;
+                    tree_model.get_value(tree_iter,0,out title_v);
+
+                    string title = title_v.get_string();
+
+                    bookmarks_db.run_query(@"DELETE FROM bookmarks WHERE title = \"$(title)\""); 
+                    ((Gtk.ListStore)tree_model).remove(ref tree_iter);
+
+                }
+                catch (Error e)
+                {
+                    message(e.message);
+                }
+            }
+        }    
+
+        [GtkCallback]
+        private void on_btn_close_clicked(Gtk.Button self)
+        {
+            this.destroy();
         }    
 	}
     

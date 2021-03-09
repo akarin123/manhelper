@@ -120,8 +120,8 @@
                             <property name="use_underline">True</property>
                             <property name="use_stock">True</property>
                             <signal name="activate" handler="on_find_clicked" swapped="no"/>
-                            <accelerator key="f" signal="activate" modifiers="GDK_CONTROL_MASK"/>
                             <accelerator key="f" signal="activate" modifiers="GDK_SHIFT_MASK | GDK_CONTROL_MASK"/>
+                            <accelerator key="f" signal="activate" modifiers="GDK_CONTROL_MASK"/>
                           </object>
                         </child>
                       </object>
@@ -170,6 +170,7 @@
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="receives_default">True</property>
+                    <property name="tooltip_text" translatable="yes">Back</property>
                     <property name="margin_left">5</property>
                     <property name="margin_right">5</property>
                     <property name="image">image_back</property>
@@ -187,6 +188,7 @@
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="receives_default">True</property>
+                    <property name="tooltip_text" translatable="yes">Forward</property>
                     <property name="margin_left">5</property>
                     <property name="margin_right">5</property>
                     <property name="image">image_fwd</property>
@@ -204,6 +206,7 @@
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="receives_default">True</property>
+                    <property name="tooltip_text" translatable="yes">Home</property>
                     <property name="margin_left">5</property>
                     <property name="margin_right">5</property>
                     <property name="image">image_home</property>
@@ -221,6 +224,7 @@
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="receives_default">True</property>
+                    <property name="tooltip_text" translatable="yes">Add to Bookmarks</property>
                     <property name="margin_left">5</property>
                     <property name="margin_right">5</property>
                     <property name="image">image_plus</property>
@@ -237,6 +241,7 @@
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="receives_default">True</property>
+                    <property name="tooltip_text" translatable="yes">View Bookmarks</property>
                     <property name="margin_left">5</property>
                     <property name="margin_right">5</property>
                     <property name="image">image_index</property>
