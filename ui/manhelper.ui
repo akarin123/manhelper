@@ -2,10 +2,20 @@
 <!-- Generated with glade 3.22.1 -->
 <interface>
   <requires lib="gtk+" version="3.20"/>
+  <object class="GtkImage" id="image_add">
+    <property name="visible">True</property>
+    <property name="can_focus">False</property>
+    <property name="stock">gtk-add</property>
+  </object>
   <object class="GtkImage" id="image_back">
     <property name="visible">True</property>
     <property name="can_focus">False</property>
     <property name="stock">gtk-go-back</property>
+  </object>
+  <object class="GtkImage" id="image_bookmarks">
+    <property name="visible">True</property>
+    <property name="can_focus">False</property>
+    <property name="icon_name">user-bookmarks</property>
   </object>
   <object class="GtkImage" id="image_fwd">
     <property name="visible">True</property>
@@ -22,11 +32,6 @@
     <property name="can_focus">False</property>
     <property name="stock">gtk-index</property>
   </object>
-  <object class="GtkImage" id="image_plus">
-    <property name="visible">True</property>
-    <property name="can_focus">False</property>
-    <property name="icon_name">user-bookmarks</property>
-  </object>
   <template class="ManHelperMainWin" parent="GtkApplicationWindow">
     <property name="width_request">400</property>
     <property name="can_focus">False</property>
@@ -37,7 +42,7 @@
       <placeholder/>
     </child>
     <child>
-      <object class="GtkBox">
+      <object class="GtkBox" id="win_mainbox">
         <property name="visible">True</property>
         <property name="can_focus">False</property>
         <property name="orientation">vertical</property>
@@ -51,7 +56,7 @@
               <object class="GtkMenuBar" id="menubar">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
-                <signal name="button-press-event" handler="on_view_mouse_press" swapped="no"/>
+                <signal name="button-press-event" handler="on_search_list_outside_mouse_press" swapped="no"/>
                 <child>
                   <object class="GtkMenuItem">
                     <property name="visible">True</property>
@@ -227,7 +232,7 @@
                     <property name="tooltip_text" translatable="yes">Add to Bookmarks</property>
                     <property name="margin_left">5</property>
                     <property name="margin_right">5</property>
-                    <property name="image">image_plus</property>
+                    <property name="image">image_bookmarks</property>
                     <signal name="clicked" handler="on_btn_add_bookmark_clicked" swapped="no"/>
                   </object>
                   <packing>
@@ -294,11 +299,29 @@
               </packing>
             </child>
             <child>
+              <object class="GtkButton" id="btn_add_page">
+                <property name="visible">True</property>
+                <property name="can_focus">True</property>
+                <property name="receives_default">True</property>
+                <property name="tooltip_text" translatable="yes">Add a new tab</property>
+                <property name="margin_left">2</property>
+                <property name="margin_right">2</property>
+                <property name="image">image_add</property>
+                <signal name="clicked" handler="on_btn_add_page_clicked" swapped="no"/>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">True</property>
+                <property name="position">1</property>
+              </packing>
+            </child>
+            <child>
               <object class="GtkButton" id="btn_man">
                 <property name="label" translatable="yes">Man</property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="receives_default">True</property>
+                <property name="tooltip_text" translatable="yes">Man</property>
                 <property name="margin_left">2</property>
                 <property name="margin_right">5</property>
                 <signal name="clicked" handler="on_btn_man_clicked" swapped="no"/>
@@ -306,7 +329,7 @@
               <packing>
                 <property name="expand">False</property>
                 <property name="fill">True</property>
-                <property name="position">1</property>
+                <property name="position">2</property>
               </packing>
             </child>
           </object>
@@ -317,19 +340,7 @@
           </packing>
         </child>
         <child>
-          <object class="GtkScrolledWindow" id="scrolled">
-            <property name="visible">True</property>
-            <property name="can_focus">True</property>
-            <property name="shadow_type">in</property>
-            <child>
-              <placeholder/>
-            </child>
-          </object>
-          <packing>
-            <property name="expand">True</property>
-            <property name="fill">True</property>
-            <property name="position">2</property>
-          </packing>
+          <placeholder/>
         </child>
       </object>
     </child>

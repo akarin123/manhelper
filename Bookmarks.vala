@@ -11,11 +11,11 @@ namespace ManHelper
     {
 
         [GtkChild]
-        Gtk.TreeView bookmarks_view;
+        private Gtk.TreeView bookmarks_view;
 
-        MainWin win;
-        Gtk.ListStore list_store;
-        Gtk.TreeIter list_iter;
+        private MainWin win;
+        private Gtk.ListStore list_store;
+        private Gtk.TreeIter list_iter;
 
         public BookmarksDialog(MainWin win)
         {
@@ -93,7 +93,7 @@ namespace ManHelper
                     //print(contents.get_value_at(1,row_num).get_string()+"\n");
 
                     var uri = contents.get_value_at(1,row_num).get_string();
-                    this.win.view.load_uri(uri);
+                    this.win.view_current.load_uri(uri);
 
                     title_v.unset();
                 }

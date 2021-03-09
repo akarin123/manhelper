@@ -311,7 +311,7 @@ namespace ManHelper
             sec_index=man_data[1].replace("(","").replace(")","");
             //print(man_data[0]+"."+sec_index+"\n");
             item_uri="http://localhost/cgi-bin/man/man2html?"+sec_index+"+"+man_data[0].strip();
-            this.win.view.load_uri(item_uri);  
+            this.win.view_current.load_uri(item_uri);  
             this.destroy();
         }
         /*

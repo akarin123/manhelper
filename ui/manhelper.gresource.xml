@@ -2,6 +2,7 @@
 <gresources>
   <gresource prefix="/ui">
     <file preprocess="xml-stripblanks">manhelper.ui</file>
+    <file preprocess="xml-stripblanks">multitab_pager.ui</file>
     <file preprocess="xml-stripblanks">search_dialog.ui</file>
     <file preprocess="xml-stripblanks">bookmarks_dialog.ui</file>
     <file preprocess="xml-stripblanks">keyword_list.ui</file>

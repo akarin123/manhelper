@@ -54,47 +54,53 @@ namespace ManHelper
         public const string main_title = "Man Helper";
         private string home_uri;
         //internal uint section_num_max;
-        internal int height_header;
+        //internal int height_header;
         internal string last_entry_text {get;set;default="";} 
         internal KeywordList search_list = null;
         internal Gtk.FileChooserDialog file_chooser = null;
         internal BookmarksDialog bookmarks_dialog = null;
+        internal MultitabPager pager = null;
+        internal WebKit.WebView view_current; 
 
         [GtkChild]
         private Gtk.Button btn_man;
         [GtkChild]
         internal Gtk.SearchEntry entry_search;
+        //[GtkChild]
+        //internal Gtk.ScrolledWindow scrolled;
         [GtkChild]
-        internal Gtk.ScrolledWindow scrolled;
-
-        internal WebKit.WebView view; 
+        private Gtk.Box win_mainbox;
         
         internal MainWin(App app)
         {
             Object(application: app,title: main_title);
             //section_num_max = app.section_num_max;
             this.app = app;
-            view = new WebKit.WebView();  
-            view.button_press_event.connect(on_view_mouse_press);
-            scrolled.add_with_properties(view);
-            
-            //string home_uri = "https://man7.org/linux/man-pages/man1/man.1.html";     
-            home_uri = "http://localhost/cgi-bin/man/man2html";
-            view.load_uri(home_uri);  
+            //view = new WebKit.WebView();  
+            //this.view = new WebKit.WebView()[];
+            //scrolled.add_with_properties(view);
+            this.pager = new MultitabPager(this);
+            this.view_current.button_press_event.connect(on_search_list_outside_mouse_press);
+            this.win_mainbox.pack_start(pager,true,true,0);
+            //pager.first_scrolled.add_with_properties(view);
 
-            search_list = new KeywordList(this,"man");
-            search_list.show_all();
-            search_list.hide();
+            this.home_uri = "http://localhost/cgi-bin/man/man2html";
+            this.view_current.load_uri(home_uri);  
+            //pager.first_label.set_label("Manual Pages - Main Contents");
 
-            height_header = guess_height_headerbar();
+            this.search_list = new KeywordList(this,"man");
+            this.search_list.show_all();
+            this.search_list.hide();
+
+            //height_header = guess_height_headerbar();
 
             //bookmarks_db = load_bookmarks(this.bookmarks_file);
             var bookmarks_dirpath = app.bookmarks_parent_dir+app.bookmarks_directory;
             this.app.bookmarks_db = new DataBase(bookmarks_dirpath,app.bookmarks_filename);
-
         }
 
         /* guess the height of title bar*/
+        /*
         private int guess_height_headerbar()
         {
             int height_header = 50;
@@ -112,6 +118,17 @@ namespace ManHelper
             window_temp.destroy();
             //print(@"$(height_header)\n");
             return (height_header+1);
+        }
+        */
+        [GtkCallback]
+        private bool on_search_list_outside_mouse_press(Gtk.Widget self,Gdk.EventButton evnt)
+        {
+            if (this.search_list.get_realized())
+            {
+                this.search_list.destroy();
+            }
+            
+            return false;
         }
 
         [GtkCallback]
@@ -148,7 +165,7 @@ namespace ManHelper
 
                     if (status[ii-1])
                     {
-                        view.load_uri(man_uri_test[ii-1].uri);
+                        this.view_current.load_uri(man_uri_test[ii-1].uri);
                         entry_found = true;  
                         break;            
                     }
@@ -165,7 +182,7 @@ namespace ManHelper
                 if (status[0])
                 {
                     //print("there\n");
-                    view.load_uri(man_uri_test[0].uri);   
+                    this.view_current.load_uri(man_uri_test[0].uri);   
                     entry_found = true;    
                 }
             }
@@ -184,7 +201,14 @@ namespace ManHelper
                     this.search_list.destroy();
             }
         }
-        
+
+        [GtkCallback]
+        private void on_btn_add_page_clicked(Gtk.Button self)
+        {
+            this.pager.append_manpage();
+            //this.pager.show_all();
+        }
+
         [GtkCallback]
         private void on_entry_search_changed(Gtk.SearchEntry self)
         {
@@ -229,17 +253,6 @@ namespace ManHelper
         }
 
         [GtkCallback]
-        private bool on_view_mouse_press(Gtk.Widget self,Gdk.EventButton evnt)
-        {
-            if (this.search_list.get_realized())
-            {
-                this.search_list.destroy();
-            }
-
-            return false;
-        }
-
-        [GtkCallback]
         private void on_quit_clicked(Gtk.MenuItem self)
         {
             this.destroy();
@@ -259,9 +272,9 @@ namespace ManHelper
         {
             var focus = this.get_focus();
 
-            if (focus==this.view)
+            if (focus==this.view_current)
             {
-                this.view.execute_editing_command("Copy");
+                this.view_current.execute_editing_command("Copy");
             }
             else if (focus==this.entry_search)
             {
@@ -279,7 +292,7 @@ namespace ManHelper
             Regex regex_html;
             bool save_succeed = false;
             string file_extension = ".mhtml";
-            string title = this.view.title;
+            string title = this.view_current.title;
 
             try
             {
@@ -328,7 +341,7 @@ namespace ManHelper
 
                 try
                 {
-                    save_succeed = yield view.save_to_file(file,WebKit.SaveMode.MHTML,null);
+                    save_succeed = yield this.view_current.save_to_file(file,WebKit.SaveMode.MHTML,null);
                 }
                 catch (Error e)
                 {
@@ -392,19 +405,19 @@ namespace ManHelper
         [GtkCallback]
         void on_btn_back_clicked(Gtk.Button self)
         {
-            this.view.go_back();
+            this.view_current.go_back();
         }
         
         [GtkCallback]
         void on_btn_fwd_clicked(Gtk.Button self)
         {
-            this.view.go_forward();
+            this.view_current.go_forward();
         }
 
         [GtkCallback]
         void on_btn_home_clicked(Gtk.Button self)
         {
-            this.view.load_uri(this.home_uri);
+            this.view_current.load_uri(this.home_uri);
         }
 
         [GtkCallback]
@@ -413,14 +426,17 @@ namespace ManHelper
             string title;
             string uri;
 
-            title = this.view.get_title()??"NULL";
-            uri = this.view.get_uri();
+            title = this.view_current.get_title()??"NULL";
+            uri = this.view_current.get_uri();
 
             try
             {
                 //print(@"VALUES (\"$(title)\", \"$(uri)\")\n");
-                var bookmarks_db = this.app.bookmarks_db;
-                bookmarks_db.run_query(@"REPLACE INTO bookmarks (title, uri) VALUES (\"$(title)\", \"$(uri)\")");
+                if (uri!=null)
+                {
+                    var bookmarks_db = this.app.bookmarks_db;
+                    bookmarks_db.run_query(@"REPLACE INTO bookmarks (title, uri) VALUES (\"$(title)\", \"$(uri)\")");
+                }
             }
             catch (Error e)
             {
@@ -485,7 +501,7 @@ namespace ManHelper
         internal SearchDialog(MainWin win)
         {          
             //parent_win = win;
-            main_view = win.view;
+            main_view = win.view_current;
         }
         
         public WebKit.FindOptions option
