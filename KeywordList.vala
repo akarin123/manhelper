@@ -11,15 +11,15 @@ namespace ManHelper
         public string keyword {get;set;default="";}
         public int find_num  {get;set;default=0;}
         private MainWin win;
-        private int x_list;
-        private int y_list;
+        //private int x_list;
+        //private int y_list;
         private Gtk.MenuItem last_selected = null;
 
         [GtkChild]
         private Gtk.ScrolledWindow keywordscrolled;
 
         [GtkChild]
-        private Gtk.MenuBar keywordmenu;
+        internal Gtk.MenuBar keywordmenu;
         //private Gtk.Box keywordbox;
         private string man_stdout;
         private string man_stderr;
@@ -99,44 +99,59 @@ namespace ManHelper
             x_list=x_rel+x_win;
             y_list=y_rel+y_win+win.height_header;
             */
-            calculate_keyword_list_pos(win,out this.x_list,out this.y_list);
-            
-            this.move(this.x_list,this.y_list);
-            Timeout.add(150,update_keyword_list_geom);
+            //calculate_keyword_list_pos(win,out this.x_list,out this.y_list);
+            update_keyword_list_pos(win);
+            //this.move(this.x_list,this.y_list);
+            Timeout.add(150,()=>{update_keyword_list_geom(this.win);return Source.CONTINUE;});
             //Idle.add(update_keyword_list_position);
 
             //this.set_keep_above(true);
             this.set_transient_for(win);
         }
 
-        private void calculate_keyword_list_pos(MainWin win, out int x, out int y)
+        //private void calculate_keyword_list_pos(MainWin win, out int x, out int y)
+        internal void update_keyword_list_pos(MainWin win)
         {
-            int x_win,y_win,x_rel,y_rel;
+            //int x_win,y_win,x_rel,y_rel;
             //int x_list,y_list;
+            Gtk.Allocation entry_allcation;
+            Gdk.Window search_list_gdkwin;
+            //win.search_list.show_all();
+            if (this.get_realized())
+            {
+                win.entry_search.get_allocation(out entry_allcation);
+                search_list_gdkwin = this.get_window();
+                search_list_gdkwin.move_to_rect(entry_allcation,Gdk.Gravity.SOUTH_WEST,Gdk.Gravity.NORTH_WEST,Gdk.AnchorHints.RESIZE_Y,0,0);  
+            }
 
-            win.scrolled.translate_coordinates(win,0,0,out x_rel,out y_rel);
-            win.get_position(out x_win,out y_win);
-            x=x_rel+x_win;
-            y=y_rel+y_win+win.height_header;
+            //win.scrolled.translate_coordinates(win,0,0,out x_rel,out y_rel);
+            //win.get_position(out x_win,out y_win);
+            //x=x_rel+x_win;
+            //y=y_rel+y_win/*+win.height_header*/;
+
         }
 
-        private bool update_keyword_list_geom()
+        internal bool update_keyword_list_geom(MainWin win)
         {
             //print("update now!"+Time.local(time_t()).to_string()+"\n");
             
             //int width;
-            int x_list_new,y_list_new;
+            //int x_list_new,y_list_new;
             int width_new;
             Gtk.MenuItem selected_item = null;
 
-            calculate_keyword_list_pos(this.win,out x_list_new,out y_list_new);
-
+            if (this.get_realized())
+            {
+                update_keyword_list_pos(win);
+            }
+            //calculate_keyword_list_pos(this.win,out x_list_new,out y_list_new);
+            /*
             if (((x_list_new-x_list).abs()+(x_list_new-y_list).abs())>1)
             {
                 this.move(x_list_new,y_list_new);
-            }
+            }*/
             
-            width_new = this.win.entry_search.get_allocated_width();
+            width_new = win.entry_search.get_allocated_width();
 
             if ((this.visible)&&(width_new-this.width_request).abs()>1)
             {
@@ -147,7 +162,7 @@ namespace ManHelper
                 
                 //print(@"width now:$(width_new),$(this.width_request), time:"+Time.local(time_t()).to_string()+"\n");
             }
-
+            
             
             if (this.get_realized())
             {

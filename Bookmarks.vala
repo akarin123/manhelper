@@ -89,8 +89,8 @@ namespace ManHelper
                     Value title_v;
                     tree_model.get_value(tree_iter,0,out title_v);
 
-                    SList<Value?> title_list = new SList<Value>();
-                    print("title: %s\n",title_v.get_string());
+                    SList<Value?> title_list = new SList<Value?>();
+                    //print("title: %s\n",title_v.get_string());
                     title_list.append(title_v);
 
                     //title_list.append("man");

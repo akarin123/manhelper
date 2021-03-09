@@ -12,16 +12,27 @@ namespace ManHelper
         public MainWin win;
         public string bookmarks_file {set;get;default="SQLite://DB_DIR=.;DB_NAME=bookmarks";}
         internal DataBase bookmarks_db = null;
-        
+        private Gdk.Pixbuf app_icon;
+
         protected override void activate()
         {   
-            //print("Before\n");
+            //print("Before\n");                
             var app_win = new MainWin(this);
-            //app_win.icon = new Gdk.Pixbuf.from_file ("icon.png");
+
             app_win.show_all();
 
             this.win = app_win;
-            //print("After!\n");
+
+                        try
+            {
+                app_icon = new Gdk.Pixbuf.from_resource("/ui/icon_manhelper.png");
+                app_icon = app_icon.scale_simple(128,128,Gdk.InterpType.TILES);
+                app_win.icon = app_icon;                
+            }
+            catch (Error e)
+            {
+                message(e.message);
+            }
         }
 
         protected override void startup()
@@ -182,7 +193,7 @@ namespace ManHelper
             const int long_cmd = 6;
             //List<Gtk.MenuItem> menu_items; 
             KeywordList old_list;
-
+            /*
             //int width = self.get_allocated_width();
             //int height = self.get_allocated_height();
             int x_root,y_root,x_rel,y_rel;
@@ -195,14 +206,14 @@ namespace ManHelper
             x=x_rel+x_root;
             y=y_rel+y_root+this.height_header;
             //print(@"$(this.height_header)\n");
-
+            */
             if (text.length>long_cmd)
             {
                 old_list = this.search_list;
 
                 if (old_list.get_realized())
                 {
-                    Timeout.add(150,()=>{old_list.destroy();return false;}); // add a 150 ms delay
+                    Timeout.add(150,()=>{old_list.destroy();return Source.REMOVE;}); // add a 150 ms delay
                     //print("destroy old list\n");
                 }
 
@@ -210,8 +221,18 @@ namespace ManHelper
 
                 if (this.search_list.find_num>0)
                 {
+                    //this.search_list.keywordmenu.popup_at_widget(this.entry_search,Gdk.Gravity.SOUTH_WEST,Gdk.Gravity.NORTH_WEST,null);
+                    
+                    /*
+                    Gtk.Allocation scrolled_allcation;
+                    Gdk.Window search_list_gdkwin;
                     this.search_list.show_all();
-
+                    this.scrolled.get_allocation(out scrolled_allcation);
+                    search_list_gdkwin = this.search_list.get_window();
+                    search_list_gdkwin.move_to_rect(scrolled_allcation,Gdk.Gravity.NORTH_WEST,Gdk.Gravity.NORTH_WEST,Gdk.AnchorHints.RESIZE_Y,0,0);  
+                    */
+                    this.search_list.show_all();
+                    this.search_list.update_keyword_list_pos(this);
                     this.present();
                     //print("show new list\n");
                 }
@@ -332,7 +353,7 @@ namespace ManHelper
 
                 try
                 {
-                    save_succeed = yield view.save_to_file(file,WebKit.SaveMode.MHTML);
+                    save_succeed = yield view.save_to_file(file,WebKit.SaveMode.MHTML,null);
                 }
                 catch (Error e)
                 {
