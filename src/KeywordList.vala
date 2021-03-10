@@ -74,11 +74,6 @@ namespace ManHelper
             
             for (var index=0;index<find_num;index++)
             {
-                //if (index>max_show)
-                //    break;
-
-                //print(man_entries[index]+"\n");
-                //print(index.to_string()+"\n");
                 var menu_item = new Gtk.MenuItem.with_label(man_entries[index]); 
                 menu_item.activate.connect(navigate_to_uri);
                 this.keywordmenu.append(menu_item);
@@ -108,23 +103,13 @@ namespace ManHelper
             this.set_attached_to(win);
             this.width_request = win.entry_search.get_allocated_width();
 
-            /*
-            win.scrolled.translate_coordinates(win,0,0,out x_rel,out y_rel);
-            win.get_position(out x_win,out y_win);
-            x_list=x_rel+x_win;
-            y_list=y_rel+y_win+win.height_header;
-            */
-            //calculate_keyword_list_pos(win,out this.x_list,out this.y_list);
             update_keyword_list_pos(win);
             //this.move(this.x_list,this.y_list);
             Timeout.add(150,()=>{update_keyword_list_geom(this.win);return Source.CONTINUE;});
-            //Idle.add(update_keyword_list_position);
 
-            //this.set_keep_above(true);
             this.set_transient_for(win);
         }
 
-        //private void calculate_keyword_list_pos(MainWin win, out int x, out int y)
         internal void update_keyword_list_pos(MainWin win)
         {
             //int x_win,y_win,x_rel,y_rel;
@@ -139,19 +124,10 @@ namespace ManHelper
                 search_list_gdkwin.move_to_rect(entry_allcation,Gdk.Gravity.SOUTH_WEST,Gdk.Gravity.NORTH_WEST,Gdk.AnchorHints.RESIZE_Y,0,0);  
             }
 
-            //win.scrolled.translate_coordinates(win,0,0,out x_rel,out y_rel);
-            //win.get_position(out x_win,out y_win);
-            //x=x_rel+x_win;
-            //y=y_rel+y_win/*+win.height_header*/;
-
         }
 
-        internal bool update_keyword_list_geom(MainWin win)
+        internal void update_keyword_list_geom(MainWin win)
         {
-            //print("update now!"+Time.local(time_t()).to_string()+"\n");
-            
-            //int width;
-            //int x_list_new,y_list_new;
             int width_new;
             Gtk.MenuItem selected_item = null;
 
@@ -159,12 +135,6 @@ namespace ManHelper
             {
                 update_keyword_list_pos(win);
             }
-            //calculate_keyword_list_pos(this.win,out x_list_new,out y_list_new);
-            /*
-            if (((x_list_new-x_list).abs()+(x_list_new-y_list).abs())>1)
-            {
-                this.move(x_list_new,y_list_new);
-            }*/
             
             width_new = win.entry_search.get_allocated_width();
 
@@ -185,32 +155,8 @@ namespace ManHelper
                 this.last_selected = selected_item;
                 //print(selected_item.label+"\n");
             }
-            /*
-            if (selected_item!=null)
-            {
-                //print("here,");
-                int item_x,item_y;
-                Gtk.Adjustment vadj;
 
-                selected_item.translate_coordinates(this,0,0,out item_x,out item_y);
-
-                if (item_y>this.height_request)
-                {
-                    vadj = this.keywordscrolled.get_vadjustment();
-                    vadj.value = vadj.value+menu_item_height*(max_show/2);
-                    this.keywordmenu.select_item(selected_item);
-                }
-                else if(item_y<0)
-                {
-                    vadj = this.keywordscrolled.get_vadjustment();
-                    vadj.value = vadj.value-menu_item_height*(max_show/2);
-                    this.keywordmenu.select_item(selected_item);
-                    //keywordview.vadjustment = keywordview.vadjustment-menu_item_height;
-                }
-                //print(item_x.to_string()+", "+item_y.to_string()+"\n");
-            }*/
-
-            return true;
+            //return true;
         }
 
         [GtkCallback]
@@ -300,11 +246,7 @@ namespace ManHelper
 
             if ((last_selected!=null)&&((x<=0)||(x>=this.get_allocated_width())))
             {   
-                
-                //print(this.get_allocated_width().to_string()+"\n");
                 this.keywordmenu.select_item(last_selected);
-                //print("selected here\n");
-                //print(((Gtk.MenuItem)keywordmenu.get_selected_item()).label+"\n");
             }
 
             return false;
@@ -312,7 +254,6 @@ namespace ManHelper
         
         private void navigate_to_uri(Gtk.MenuItem self)
         {
-            //need further implementation
             //Gtk.MenuItem selected_item;
             string man_entry;
             string[] man_data;

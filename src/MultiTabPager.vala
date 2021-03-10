@@ -42,16 +42,16 @@ namespace ManHelper
             WebKit.WebView view; 
             this.win = win;
             win.pager = this;
-            view = new WebKit.WebView();  
-            view.set_data<Gtk.Button>("button",first_btn_close_page);
+            view = new WebKit.WebView();
+            this.first_scrolled.add(view);
+            win.view_current = view;
 
+            view.set_data<Gtk.Button>("button",first_btn_close_page);
             first_btn_close_page.set_data<Gtk.Label>("label",first_label);
             first_scrolled.set_data<WebKit.WebView>("view",view);
-            
-            this.first_scrolled.add(view);
-            view.load_changed.connect(on_view_load_finished);
 
-            win.view_current = view;
+            view.load_changed.connect(on_view_load_finished);
+            view.button_press_event.connect(win.on_search_list_outside_mouse_press);
         }
 
         public void append_manpage()
@@ -81,6 +81,7 @@ namespace ManHelper
             var new_view = new WebKit.WebView(); 
             new_view.set_data<Gtk.Button>("button",btn_page_close);
             new_view.load_changed.connect(on_view_load_finished);
+            new_view.button_press_event.connect(win.on_search_list_outside_mouse_press);
             //win.view += new_view; /* Dynamically increase the view array */
             //new_view.button_press_event.connect(on_view_mouse_press);
             //new_scrolled.add_with_properties(new_view);

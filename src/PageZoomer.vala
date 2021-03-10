@@ -23,11 +23,11 @@ namespace ManHelper
     [GtkTemplate (ui = "/ui/page_zoomer.ui")]
     internal class PageZoomer: Gtk.Box
     {
-        public uint zoom_ratio {set;get;default=100;}
-        public uint zoom_step {set;get;default=10;}
+        public int zoom_ratio {set;get;default=100;}
+        public int zoom_step {set;get;default=10;}
 
-        private static uint zoom_min = 10;
-        private static uint zoom_max = 990;
+        private static int zoom_min = 10;
+        private static int zoom_max = 990;
         internal uint32 default_font_size;
 
         private MainWin win;
@@ -55,14 +55,14 @@ namespace ManHelper
         [GtkCallback]
         void on_btn_up_clicked(Gtk.Button self)
         {
-            this.zoom_ratio = uint.min(this.zoom_ratio+this.zoom_step,PageZoomer.zoom_max);
+            this.zoom_ratio = int.min(this.zoom_ratio+this.zoom_step,PageZoomer.zoom_max);
             update_zoom_entry();
         }
 
         [GtkCallback]
         void on_btn_down_clicked(Gtk.Button self)
         {
-            this.zoom_ratio = uint.max(this.zoom_ratio-this.zoom_step,PageZoomer.zoom_min);
+            this.zoom_ratio = int.max(this.zoom_ratio-this.zoom_step,PageZoomer.zoom_min);
             update_zoom_entry();
         }
 
@@ -85,18 +85,21 @@ namespace ManHelper
             double ratio;
             //uint32 font_size;
             uint32 font_size_new;
-            
+            int zoom_ratio_raw;
+
             var view = this.win.view_current;
             var settings = view.get_settings();
 
-            ratio  = uint.parse(this.entry_zoom.get_text())/100.0;
+            zoom_ratio_raw = int.parse(this.entry_zoom.get_text());
+            zoom_ratio = zoom_ratio_raw.clamp(PageZoomer.zoom_min,PageZoomer.zoom_max);
+            ratio  = zoom_ratio/100.0;
             font_size_new = (uint32)(Math.round(this.default_font_size*ratio));
             
             settings.set_default_font_size(font_size_new);
             view.set_settings(settings);
             //view.reload();
 
-            zoom_ratio = uint.parse(this.entry_zoom.get_text());
+            //zoom_ratio = int.parse(this.entry_zoom.get_text());
         }
     }
 

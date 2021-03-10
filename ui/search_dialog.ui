@@ -41,7 +41,7 @@
             <property name="homogeneous">True</property>
             <property name="layout_style">end</property>
             <child>
-              <object class="GtkButton">
+              <object class="GtkButton" id="btn_clear">
                 <property name="label" translatable="yes">Clear</property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
@@ -56,7 +56,7 @@
               </packing>
             </child>
             <child>
-              <object class="GtkButton">
+              <object class="GtkButton" id="btn_find_prev">
                 <property name="label" translatable="yes">Find Prev.</property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
@@ -71,7 +71,7 @@
               </packing>
             </child>
             <child>
-              <object class="GtkButton">
+              <object class="GtkButton" id="btn_find_next">
                 <property name="label" translatable="yes">Find Next.</property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
@@ -120,6 +120,7 @@
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="margin_right">5</property>
+                    <signal name="key-press-event" handler="key_enter_pressed" swapped="no"/>
                   </object>
                   <packing>
                     <property name="expand">True</property>

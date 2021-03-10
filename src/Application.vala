@@ -69,10 +69,11 @@ namespace ManHelper
         private string home_uri;
         //internal uint section_num_max;
         //internal int height_header;
-        internal string last_entry_text {get;set;default="";} 
+        internal string last_entry_text {set;get;default="";} 
         internal KeywordList search_list = null;
         internal Gtk.FileChooserDialog file_chooser = null;
         internal BookmarksDialog bookmarks_dialog = null;
+        internal SearchDialog search_dialog = null;
         internal MultitabPager pager = null;
         internal WebKit.WebView view_current; 
         internal PageZoomer page_zoomer;
@@ -93,10 +94,7 @@ namespace ManHelper
             Object(application: app,title: main_title);
             //section_num_max = app.section_num_max;
             this.app = app;
-            //view = new WebKit.WebView();  
-            //this.view = new WebKit.WebView()[];
-            //scrolled.add_with_properties(view);
-            this.pager = new MultitabPager(this);
+            this.pager = new MultitabPager(this); /* The Webkit view is packed here */
             this.view_current.button_press_event.connect(on_search_list_outside_mouse_press);
             this.box_mainwin.pack_start(pager,true,true,0);
             //pager.first_scrolled.add_with_properties(view);
@@ -109,13 +107,6 @@ namespace ManHelper
             this.page_zoomer = new PageZoomer(this);
             box_page_zoomer.pack_start(this.page_zoomer,true,true,0);
 
-            this.search_list = new KeywordList(this,"man");
-            this.search_list.show_all();
-            this.search_list.hide();
-
-            //height_header = guess_height_headerbar();
-
-            //bookmarks_db = load_bookmarks(this.bookmarks_file);
             var bookmarks_dirpath = app.bookmarks_parent_dir+app.bookmarks_directory;
             this.app.bookmarks_db = new DataBase(bookmarks_dirpath,app.bookmarks_filename);
         }
@@ -142,9 +133,9 @@ namespace ManHelper
         }
         */
         [GtkCallback]
-        private bool on_search_list_outside_mouse_press(Gtk.Widget self,Gdk.EventButton evnt)
+        internal bool on_search_list_outside_mouse_press(Gtk.Widget self,Gdk.EventButton evnt)
         {
-            if (this.search_list.get_realized())
+            if ((this.search_list!=null)&&(this.search_list.get_realized()))
             {
                 this.search_list.destroy();
             }
@@ -211,15 +202,17 @@ namespace ManHelper
             if (!entry_found)
             {
                 //print("Not found!\n");
-                this.set_tooltip_text("No manual entry for "+entry_text);
+                this.set_tooltip_text("No man page for "+entry_text);
                 this.trigger_tooltip_query();
             }
             else
             {
                 this.set_has_tooltip(false);
 
-                if (this.search_list.get_realized())
+                if ((this.search_list!=null)&&(this.search_list.get_realized()))
+                {
                     this.search_list.destroy();
+                }
             }
         }
 
@@ -242,7 +235,7 @@ namespace ManHelper
             {
                 old_list = this.search_list;
 
-                if (old_list.get_realized())
+                if ((old_list!=null)&&(old_list.get_realized()))
                 {
                     Timeout.add(150,()=>{old_list.destroy();return Source.REMOVE;}); // add a 150 ms delay
                     //print("destroy old list\n");
@@ -256,13 +249,13 @@ namespace ManHelper
                     this.search_list.update_keyword_list_pos(this);
                     this.present();
                 }
-
-
             }
             else
             {
-                if (this.search_list.get_realized())
+                if ((this.search_list!=null)&&(this.search_list.get_realized()))
+                {
                     this.search_list.destroy();
+                }
             }
 
         }
@@ -379,10 +372,17 @@ namespace ManHelper
         [GtkCallback]
         private void on_find_clicked(Gtk.MenuItem self)
         {
-            SearchDialog search_dialog;
+            //SearchDialog search_dialog;
 
-            search_dialog = new SearchDialog(this);
-            search_dialog.show_all();
+            if ((this.search_dialog==null)||(!this.search_dialog.get_realized()))
+            {
+                this.search_dialog = new SearchDialog(this);
+                this.search_dialog.show_all();
+            }
+            else
+            {   
+                this.search_dialog.present();
+            }
         }
 
         public class man_uri
@@ -463,8 +463,6 @@ namespace ManHelper
             {
                 message(e.message);
             }
-            //this.bookmarks_table.insert(uri,title);
-           //self.set_image(new Gtk.Image.from_gicon(new ThemedIcon("user-bookmarks"),Gtk.IconSize.BUTTON));
         }
 
         [GtkCallback]
@@ -515,9 +513,15 @@ namespace ManHelper
         private Gtk.CheckButton option_case;
         [GtkChild]
         private Gtk.CheckButton option_wrap;
+        [GtkChild]
+        private Gtk.Button btn_find_prev;
+        [GtkChild]
+        private Gtk.Button btn_find_next;
 
         private WebKit.WebView main_view;
         private WebKit.FindOptions _option = WebKit.FindOptions.NONE;
+
+        internal bool search_prev {set;get;default=false;}
 
         internal SearchDialog(MainWin win)
         {          
@@ -548,7 +552,11 @@ namespace ManHelper
             //print(find_text);
 
             if (find_text!="")
+            {
                 find_control.search(find_text,this.option,1024);
+            }
+
+            this.search_prev = false;
         }
 
         [GtkCallback]
@@ -562,7 +570,11 @@ namespace ManHelper
             //print(find_text);
 
             if (find_text!="")
+            {
                 find_control.search(find_text,this.option|WebKit.FindOptions.BACKWARDS,1024);
+            }
+
+            this.search_prev = true;
         }
 
         [GtkCallback]
@@ -575,6 +587,31 @@ namespace ManHelper
             find_control.search_finish();
         }
 
+        [GtkCallback]
+        private bool key_enter_pressed(Gtk.Widget self,Gdk.Event evnt)
+        {
+            Gdk.EventKey key_evnt;
+            uint keyval;
+
+            key_evnt = evnt.key;
+            keyval = key_evnt.keyval;
+            //print(@"search_prev: $(this.search_prev)\n");
+            if (keyval == Gdk.Key.Return)
+            {
+                //print("here!");
+                //print(@"search_prev: $(this.search_prev)");
+                if (this.search_prev)
+                {
+                    this.btn_find_prev.clicked();
+                }
+                else
+                {
+                    this.btn_find_next.clicked();
+                }
+            }
+
+            return false;
+        }
     }
 }
 

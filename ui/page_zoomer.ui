@@ -58,6 +58,7 @@
         <property name="visible">True</property>
         <property name="can_focus">True</property>
         <property name="receives_default">True</property>
+        <property name="tooltip_text" translatable="yes">Zoom Out</property>
         <property name="image">image_down</property>
         <property name="relief">none</property>
         <signal name="clicked" handler="on_btn_down_clicked" swapped="no"/>
@@ -73,6 +74,7 @@
         <property name="visible">True</property>
         <property name="can_focus">True</property>
         <property name="receives_default">True</property>
+        <property name="tooltip_text" translatable="yes">Zoom In</property>
         <property name="image">image_up</property>
         <property name="relief">none</property>
         <signal name="clicked" handler="on_btn_up_clicked" swapped="no"/>
@@ -88,6 +90,7 @@
         <property name="visible">True</property>
         <property name="can_focus">True</property>
         <property name="receives_default">True</property>
+        <property name="tooltip_text" translatable="yes">Resize to 100%</property>
         <property name="image">image_fit</property>
         <property name="relief">none</property>
         <signal name="clicked" handler="on_btn_fit_clicked" swapped="no"/>
