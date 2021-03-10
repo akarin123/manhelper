@@ -1,7 +1,21 @@
-/*-
- * Authored by: XX Wu <xwuanhkust@gmail.com>
- */
-
+/*
+* Copyright (c) 2021 XX Wu
+*
+* This file is part of Man Helper
+*
+* Man Helper is free software: you can redistribute it and/or modify
+* it under the terms of the GNU General Public License as published by
+* the Free Software Foundation, either version 3 of the License, or
+* (at your option) any later version.
+* Man Helper is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+* GNU General Public License for more details.
+* You should have received a copy of the GNU General Public License
+* along with Akira. If not, see <https://www.gnu.org/licenses/>.
+*
+* Authored by: XX Wu <xwuanhkust@gmail.com>
+*/
 
 namespace ManHelper
 {
@@ -61,6 +75,7 @@ namespace ManHelper
         internal BookmarksDialog bookmarks_dialog = null;
         internal MultitabPager pager = null;
         internal WebKit.WebView view_current; 
+        internal PageZoomer page_zoomer;
 
         [GtkChild]
         private Gtk.Button btn_man;
@@ -69,8 +84,10 @@ namespace ManHelper
         //[GtkChild]
         //internal Gtk.ScrolledWindow scrolled;
         [GtkChild]
-        private Gtk.Box win_mainbox;
-        
+        private Gtk.Box box_mainwin;
+        [GtkChild]
+        private Gtk.Box box_page_zoomer;
+
         internal MainWin(App app)
         {
             Object(application: app,title: main_title);
@@ -81,12 +98,16 @@ namespace ManHelper
             //scrolled.add_with_properties(view);
             this.pager = new MultitabPager(this);
             this.view_current.button_press_event.connect(on_search_list_outside_mouse_press);
-            this.win_mainbox.pack_start(pager,true,true,0);
+            this.box_mainwin.pack_start(pager,true,true,0);
             //pager.first_scrolled.add_with_properties(view);
 
             this.home_uri = "http://localhost/cgi-bin/man/man2html";
             this.view_current.load_uri(home_uri);  
             //pager.first_label.set_label("Manual Pages - Main Contents");
+
+            /* pack the Webkit view before page_zoomer */
+            this.page_zoomer = new PageZoomer(this);
+            box_page_zoomer.pack_start(this.page_zoomer,true,true,0);
 
             this.search_list = new KeywordList(this,"man");
             this.search_list.show_all();

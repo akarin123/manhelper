@@ -11,6 +11,8 @@
   <template class="ManHelperMultitabPager" parent="GtkNotebook">
     <property name="visible">True</property>
     <property name="can_focus">True</property>
+    <property name="scrollable">True</property>
+    <property name="enable_popup">True</property>
     <signal name="switch-page" handler="on_page_switched" swapped="no"/>
     <child>
       <object class="GtkScrolledWindow" id="first_scrolled">
@@ -39,7 +41,7 @@
           </packing>
         </child>
         <child>
-          <object class="GtkButton" id="first_btn">
+          <object class="GtkButton" id="first_btn_close_page">
             <property name="visible">True</property>
             <property name="can_focus">True</property>
             <property name="receives_default">True</property>

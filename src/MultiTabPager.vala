@@ -1,6 +1,21 @@
-/*-
- * Authored by: XX Wu <xwuanhkust@gmail.com>
- */
+/*
+* Copyright (c) 2021 XX Wu
+*
+* This file is part of Man Helper
+*
+* Man Helper is free software: you can redistribute it and/or modify
+* it under the terms of the GNU General Public License as published by
+* the Free Software Foundation, either version 3 of the License, or
+* (at your option) any later version.
+* Man Helper is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+* GNU General Public License for more details.
+* You should have received a copy of the GNU General Public License
+* along with Akira. If not, see <https://www.gnu.org/licenses/>.
+*
+* Authored by: XX Wu <xwuanhkust@gmail.com>
+*/
 
 namespace ManHelper
 {   
@@ -9,12 +24,14 @@ namespace ManHelper
     internal class MultitabPager: Gtk.Notebook
     {
         MainWin win;
-        string page_no = "Page No.";
+        string page_no = "page no.";
 
         [GtkChild]
         internal Gtk.ScrolledWindow first_scrolled;
         [GtkChild]
         internal Gtk.Label first_label;
+        [GtkChild]
+        internal Gtk.Button first_btn_close_page;
         [GtkChild]
         internal Gtk.Image image_close;
 
@@ -26,8 +43,13 @@ namespace ManHelper
             this.win = win;
             win.pager = this;
             view = new WebKit.WebView();  
-            //view.button_press_event.connect(on_view_mouse_press);
-            this.first_scrolled.add_with_properties(view);
+            view.set_data<Gtk.Button>("button",first_btn_close_page);
+
+            first_btn_close_page.set_data<Gtk.Label>("label",first_label);
+            first_scrolled.set_data<WebKit.WebView>("view",view);
+            
+            this.first_scrolled.add(view);
+            view.load_changed.connect(on_view_load_finished);
 
             win.view_current = view;
         }
@@ -38,8 +60,9 @@ namespace ManHelper
             var label_box = new Gtk.Box(Gtk.Orientation.HORIZONTAL,0);
             this.append_page(new_scrolled,label_box);
 
-            var page_label = new Gtk.Label("Page "+this.n_pages.to_string());
+            var page_label = new Gtk.Label(page_label_text(this.n_pages));
             var btn_page_close = new Gtk.Button();
+            btn_page_close.set_data<Gtk.Label>("label",page_label);
             var image_dup = new Gtk.Image();
 
             string icon_name;
@@ -56,25 +79,70 @@ namespace ManHelper
             btn_page_close.clicked.connect(on_btn_page_close_clicked);
             
             var new_view = new WebKit.WebView(); 
+            new_view.set_data<Gtk.Button>("button",btn_page_close);
+            new_view.load_changed.connect(on_view_load_finished);
             //win.view += new_view; /* Dynamically increase the view array */
             //new_view.button_press_event.connect(on_view_mouse_press);
-            new_scrolled.add_with_properties(new_view);
+            //new_scrolled.add_with_properties(new_view);
+            new_scrolled.add(new_view);
             new_scrolled.set_data<WebKit.WebView>("view",new_view);
             new_scrolled.set_data<Gtk.Button>("button",btn_page_close);
+            
             //print(res.to_string()+"\n");
             new_scrolled.show_all();
             label_box.show_all();
 
-            //print(this.get_n_pages().to_string()+"\n");
+            this.set_current_page(this.n_pages-1);
+            /* Notify that we have switched page */
+            this.switch_page(new_scrolled,this.n_pages-1); 
+
+            /* Set page zoom ratio accordingly */
+            double ratio;
+            uint32 font_size_new;
+            var settings = new_view.get_settings();
+            var page_zoomer = this.win.page_zoomer;
+            ratio  = uint.parse(page_zoomer.entry_zoom.get_text())/100.0;
+            font_size_new = (uint32)(Math.round(page_zoomer.default_font_size*ratio));
+            
+            settings.set_default_font_size(font_size_new);
+            new_view.set_settings(settings);
         }
         
+        public void on_view_load_finished(WebKit.WebView self, WebKit.LoadEvent load_event)
+        {
+            if (load_event == WebKit.LoadEvent.FINISHED)
+            {
+                //print("Load finished!\n");
+                
+                Gtk.Button btn_page_close = self.get_data("button");
+                Gtk.Label page_label = btn_page_close.get_data("label");
+
+                var title_page = self.get_title().replace("Man page of ","");
+                page_label.set_text(title_page);
+            }
+        }
+
         public void on_btn_page_close_clicked(Gtk.Button self)
         {
             var page_index = self.get_data<int>(page_no);
+            //print("page index: %d\n",page_index);
+            // need to update page_no of each button after the closed page 
+            for(var ii=page_index;ii<this.n_pages;ii++)
+            {
+                //rint("hello!\n");
+                var page = this.get_nth_page(ii);
+                Gtk.Button btn_close = page.get_data("button");
+                btn_close.set_data<int>(page_no,ii); /* Decrease the page_no by 1 */
+                Gtk.Label page_label = btn_close.get_data<Gtk.Label>("label");
+                page_label.set_text(page_label_text(ii));
+            }
 
             this.remove_page(page_index-1);
-            
-            // need to update page_no of each button after the closed page 
+        }
+
+        private string page_label_text(uint index)
+        {
+            return "Page "+index.to_string();
         }
 
         [GtkCallback]

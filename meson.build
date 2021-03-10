@@ -1,7 +1,7 @@
-project('manhelper', 'vala', 'c', version: '0.03')
+project('manhelper', 'vala', 'c', version: '0.04')
 
-#cc = meson.get_compiler('c')
-#m_dep = cc.find_library('m', required : false)
+cc = meson.get_compiler('c')
+m_dep = cc.find_library('m', required : false)
 gnome = import('gnome')
 
 gresources = gnome.compile_resources(
@@ -21,18 +21,19 @@ dependencies = [
     dependency('libsoup-2.4'),
     dependency('libgda-5.0'),
     dependency('libxml-2.0'),
-    #m_dep,
+    m_dep,
 ]
 
 sources = files('src/Application.vala',
                 'src/KeywordList.vala',
                 'src/Bookmarks.vala',
-                'src/MultiTabPager.vala',)
+                'src/MultiTabPager.vala',
+                'src/PageZoomer.vala',)
 
 app = executable(meson.project_name(), 
                  sources,
                  gresources, 
                  dependencies: dependencies, 
-                 install: true)
+                 install: true,)
 
 meson.add_install_script('./startup_script.sh')
