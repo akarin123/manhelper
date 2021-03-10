@@ -7,6 +7,7 @@ Man Helper is a lightweight GUI front-end for man2html under development using V
 - [x] GUI front-end
 - [x] find in man page
 - [x] search in man database
+- [x] bookmarks
 - [x] multi-tab views
 - [x] zoom in/out
 - [ ] preferences (font family, theme color, etc)
