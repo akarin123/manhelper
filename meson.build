@@ -24,10 +24,10 @@ dependencies = [
     #m_dep,
 ]
 
-sources = files('Application.vala',
-                'KeywordList.vala',
-                'Bookmarks.vala',
-                'MultiTabPager.vala',)
+sources = files('src/Application.vala',
+                'src/KeywordList.vala',
+                'src/Bookmarks.vala',
+                'src/MultiTabPager.vala',)
 
 app = executable(meson.project_name(), 
                  sources,
