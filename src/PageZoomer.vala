@@ -97,9 +97,6 @@ namespace ManHelper
             
             settings.set_default_font_size(font_size_new);
             view.set_settings(settings);
-            //view.reload();
-
-            //zoom_ratio = int.parse(this.entry_zoom.get_text());
         }
     }
 

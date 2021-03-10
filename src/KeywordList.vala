@@ -48,12 +48,9 @@ namespace ManHelper
 
         public KeywordList(MainWin win, string keyword/*, int width*/)
         {
-            //int x_win,y_win,x_rel,y_rel;
-            //int x_list,y_list;
-
             this.win = win;
             this.keyword = keyword;
-            //this.decorated = true;
+
             try 
             {
                 Process.spawn_command_line_sync ("man -k "+"\""+keyword+"\"",out man_stdout,out man_stderr,out man_status);
@@ -68,7 +65,7 @@ namespace ManHelper
             
             if (man_entries.length>0)
             {
-                find_num = man_entries.length-1; // string.split() will add a "\n" string in the last
+                find_num = man_entries.length-1; /* string.split() will add a "\n" string in the last */
                 man_entries=man_entries[0:find_num];
             }
             
@@ -112,8 +109,6 @@ namespace ManHelper
 
         internal void update_keyword_list_pos(MainWin win)
         {
-            //int x_win,y_win,x_rel,y_rel;
-            //int x_list,y_list;
             Gtk.Allocation entry_allcation;
             Gdk.Window search_list_gdkwin;
             //win.search_list.show_all();
@@ -140,8 +135,6 @@ namespace ManHelper
 
             if ((this.visible)&&(width_new-this.width_request).abs()>1)
             {
-                //print("here");
-
                 this.width_request=width_new;
                 this.resize(this.width_request,this.height_request);
                 

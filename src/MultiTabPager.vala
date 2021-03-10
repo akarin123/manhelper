@@ -127,10 +127,9 @@ namespace ManHelper
         {
             var page_index = self.get_data<int>(page_no);
             //print("page index: %d\n",page_index);
-            // need to update page_no of each button after the closed page 
+            /* Update page_no of each button after the closed page */ 
             for(var ii=page_index;ii<this.n_pages;ii++)
             {
-                //rint("hello!\n");
                 var page = this.get_nth_page(ii);
                 Gtk.Button btn_close = page.get_data("button");
                 btn_close.set_data<int>(page_no,ii); /* Decrease the page_no by 1 */
