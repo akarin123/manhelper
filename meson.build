@@ -1,4 +1,4 @@
-project('manhelper', 'vala', 'c', version: '0.04')
+project('manhelper', 'vala', 'c', version: '0.05')
 
 cc = meson.get_compiler('c')
 m_dep = cc.find_library('m', required : false)
@@ -36,4 +36,4 @@ app = executable(meson.project_name(),
                  dependencies: dependencies, 
                  install: true,)
 
-meson.add_install_script('./startup_script.sh')
+meson.add_install_script('./postinstall.sh')
