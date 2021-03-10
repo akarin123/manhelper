@@ -1,0 +1,103 @@
+/*
+* Copyright (c) 2021 XX Wu
+*
+* This file is part of Man Helper
+*
+* Man Helper is free software: you can redistribute it and/or modify
+* it under the terms of the GNU General Public License as published by
+* the Free Software Foundation, either version 3 of the License, or
+* (at your option) any later version.
+* Man Helper is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+* GNU General Public License for more details.
+* You should have received a copy of the GNU General Public License
+* along with Akira. If not, see <https://www.gnu.org/licenses/>.
+*
+* Authored by: XX Wu <xwuanhkust@gmail.com>
+*/
+
+namespace ManHelper
+{   
+    /*Add multitabs for scrolled window*/
+    [GtkTemplate (ui = "/ui/page_zoomer.ui")]
+    internal class PageZoomer: Gtk.Box
+    {
+        public uint zoom_ratio {set;get;default=100;}
+        public uint zoom_step {set;get;default=10;}
+
+        private static uint zoom_min = 10;
+        private static uint zoom_max = 990;
+        internal uint32 default_font_size;
+
+        private MainWin win;
+
+        [GtkChild]
+        internal Gtk.Entry entry_zoom;
+
+        /*
+        [GtkChild]
+        Gtk.Button btn_up;
+        [GtkChild]
+        Gtk.Button btn_down;
+        [GtkChild]
+        Gtk.Button btn_fit;
+        */
+        public PageZoomer(MainWin win)
+        {
+            this.win = win;
+            var view = win.view_current;
+            var settings = view.get_settings();
+
+            this.default_font_size = settings.get_default_font_size();
+        }
+
+        [GtkCallback]
+        void on_btn_up_clicked(Gtk.Button self)
+        {
+            this.zoom_ratio = uint.min(this.zoom_ratio+this.zoom_step,PageZoomer.zoom_max);
+            update_zoom_entry();
+        }
+
+        [GtkCallback]
+        void on_btn_down_clicked(Gtk.Button self)
+        {
+            this.zoom_ratio = uint.max(this.zoom_ratio-this.zoom_step,PageZoomer.zoom_min);
+            update_zoom_entry();
+        }
+
+        [GtkCallback]
+        void on_btn_fit_clicked(Gtk.Button self)
+        {
+            this.zoom_ratio = 100;
+            update_zoom_entry();
+        }
+        
+        void update_zoom_entry()
+        {
+            this.entry_zoom.set_text(this.zoom_ratio.to_string());
+            this.entry_zoom.changed();
+        }
+
+        [GtkCallback]
+        void on_entry_zoom_changed(Gtk.Editable self)
+        {
+            double ratio;
+            //uint32 font_size;
+            uint32 font_size_new;
+            
+            var view = this.win.view_current;
+            var settings = view.get_settings();
+
+            ratio  = uint.parse(this.entry_zoom.get_text())/100.0;
+            font_size_new = (uint32)(Math.round(this.default_font_size*ratio));
+            
+            settings.set_default_font_size(font_size_new);
+            view.set_settings(settings);
+            //view.reload();
+
+            zoom_ratio = uint.parse(this.entry_zoom.get_text());
+        }
+    }
+
+}
