@@ -1,0 +1,10 @@
+[Desktop Entry]
+Type=Application
+Name=Man Helper
+GenericName=Help Viewer
+Comment=View Man Pages
+Exec=com.github.manhelper
+Icon=com.github.manhelper
+Terminal=false
+Type=Application
+Categories=Development;Utility;System
