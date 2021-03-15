@@ -273,7 +273,7 @@ namespace ManHelper
         }
         
         [GtkCallback]
-        private void on_about_dialog_clicked(Gtk.MenuItem self)
+        private void on_about_clicked(Gtk.MenuItem self)
         {
             AboutDialog about_dialog;
 
@@ -367,6 +367,13 @@ namespace ManHelper
             }       
             
             this.file_chooser.hide();
+        }
+
+        [GtkCallback]
+        private void on_prefer_clicked(Gtk.MenuItem self)
+        {
+            var prefer_diag = new PreferDialog(this);
+            prefer_diag.show_all();
         }
 
         [GtkCallback]

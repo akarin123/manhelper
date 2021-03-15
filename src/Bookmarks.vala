@@ -20,7 +20,6 @@
 namespace ManHelper
 {   
     [GtkTemplate (ui = "/ui/bookmarks_dialog.ui")]
-    
     private class BookmarksDialog:Gtk.Dialog
     {
 

@@ -8,6 +8,7 @@
     <file preprocess="xml-stripblanks">bookmarks_dialog.ui</file>
     <file preprocess="xml-stripblanks">keyword_list.ui</file>
     <file preprocess="xml-stripblanks">about_dialog.ui</file>
+    <file preprocess="xml-stripblanks">prefer_dialog.ui</file>
     <file>icon_manhelper.png</file>
   </gresource>
 </gresources>
