@@ -75,8 +75,9 @@ namespace ManHelper
         internal BookmarksDialog bookmarks_dialog = null;
         internal SearchDialog search_dialog = null;
         internal MultitabPager pager = null;
-        internal WebKit.WebView view_current; 
-        internal PageZoomer page_zoomer;
+        internal WebKit.WebView view_current = null; 
+        internal PageZoomer page_zoomer = null;
+        internal PreferDialog prefer_dialog = null;
 
         [GtkChild]
         private Gtk.Button btn_man;
@@ -101,14 +102,15 @@ namespace ManHelper
 
             this.home_uri = "http://localhost/cgi-bin/man/man2html";
             this.view_current.load_uri(home_uri);  
-            //pager.first_label.set_label("Manual Pages - Main Contents");
 
-            /* pack the Webkit view before page_zoomer */
+            /* pack the page_zoomer after Webkit view */
             this.page_zoomer = new PageZoomer(this);
             box_page_zoomer.pack_start(this.page_zoomer,true,true,0);
 
             var bookmarks_dirpath = app.bookmarks_parent_dir+app.bookmarks_directory;
             this.app.bookmarks_db = new DataBase(bookmarks_dirpath,app.bookmarks_filename);
+
+            prefer_dialog = new PreferDialog(this);
         }
 
         /* guess the height of title bar*/
@@ -154,7 +156,6 @@ namespace ManHelper
             string[] entry_data;
             if ((entry_text=="")||(entry_text==this.last_entry_text))
             {
-                //print("same entry\n");
                 return;
             }
 
@@ -185,15 +186,12 @@ namespace ManHelper
             }
             else if (entry_data.length > 1)
             {
-
                 man_uri_test[0] = new man_uri(entry_data[0],entry_data[1]);
 
                 status[0] = man_uri_test[0].man_uri_exist();
 
-                //print("here\n");
                 if (status[0])
                 {
-                    //print("there\n");
                     this.view_current.load_uri(man_uri_test[0].uri);   
                     entry_found = true;    
                 }
@@ -201,7 +199,6 @@ namespace ManHelper
 
             if (!entry_found)
             {
-                //print("Not found!\n");
                 this.set_tooltip_text("No man page for "+entry_text);
                 this.trigger_tooltip_query();
             }
@@ -238,7 +235,6 @@ namespace ManHelper
                 if ((old_list!=null)&&(old_list.get_realized()))
                 {
                     Timeout.add(150,()=>{old_list.destroy();return Source.REMOVE;}); // add a 150 ms delay
-                    //print("destroy old list\n");
                 }
 
                 this.search_list = new KeywordList(this,text);
@@ -372,15 +368,20 @@ namespace ManHelper
         [GtkCallback]
         private void on_prefer_clicked(Gtk.MenuItem self)
         {
-            var prefer_diag = new PreferDialog(this);
-            prefer_diag.show_all();
+            if ((this.prefer_dialog==null)||(!this.prefer_dialog.get_realized()))
+            {
+                this.prefer_dialog = new PreferDialog(this);
+                this.prefer_dialog.show_all();
+            }
+            else
+            {   
+                this.prefer_dialog.present();
+            }
         }
 
         [GtkCallback]
         private void on_find_clicked(Gtk.MenuItem self)
         {
-            //SearchDialog search_dialog;
-
             if ((this.search_dialog==null)||(!this.search_dialog.get_realized()))
             {
                 this.search_dialog = new SearchDialog(this);

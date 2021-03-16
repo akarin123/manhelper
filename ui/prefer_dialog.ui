@@ -30,6 +30,7 @@
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="receives_default">True</property>
+                <signal name="clicked" handler="on_prefer_reset_clicked" swapped="no"/>
               </object>
               <packing>
                 <property name="expand">True</property>
@@ -43,6 +44,7 @@
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="receives_default">True</property>
+                <signal name="clicked" handler="on_prefer_apply_clicked" swapped="no"/>
               </object>
               <packing>
                 <property name="expand">True</property>
@@ -128,6 +130,7 @@
                     <property name="can_focus">True</property>
                     <property name="receives_default">True</property>
                     <property name="halign">end</property>
+                    <signal name="clicked" handler="on_btn_theme_clicked" swapped="no"/>
                   </object>
                   <packing>
                     <property name="expand">True</property>
