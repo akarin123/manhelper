@@ -11,7 +11,6 @@ gresources = gnome.compile_resources(
     source_dir:['ui']
 )
 
-
 dependencies = [
     dependency('glib-2.0'),
     dependency('gobject-2.0'),

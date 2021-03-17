@@ -103,7 +103,7 @@ namespace ManHelper
             var settings = new_view.get_settings();
             var page_zoomer = this.win.page_zoomer;
             ratio  = uint.parse(page_zoomer.entry_zoom.get_text())/100.0;
-            font_size_new = (uint32)(Math.round(page_zoomer.default_font_size*ratio));
+            font_size_new = (uint32)(Math.round(this.win.init_font_size*ratio));
             
             settings.set_default_font_size(font_size_new);
             new_view.set_settings(settings);
@@ -126,7 +126,7 @@ namespace ManHelper
         public void on_btn_page_close_clicked(Gtk.Button self)
         {
             var page_index = self.get_data<int>(page_no);
-            //print("page index: %d\n",page_index);
+
             /* Update page_no of each button after the closed page */ 
             for(var ii=page_index;ii<this.n_pages;ii++)
             {
@@ -134,9 +134,10 @@ namespace ManHelper
                 Gtk.Button btn_close = page.get_data("button");
                 btn_close.set_data<int>(page_no,ii); /* Decrease the page_no by 1 */
                 Gtk.Label page_label = btn_close.get_data<Gtk.Label>("label");
+
                 page_label.set_text(page_label_text(ii));
             }
-
+            
             this.remove_page(page_index-1);
         }
 

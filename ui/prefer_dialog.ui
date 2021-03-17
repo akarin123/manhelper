@@ -9,6 +9,7 @@
     <property name="title" translatable="yes">Preferences</property>
     <property name="resizable">False</property>
     <property name="type_hint">dialog</property>
+    <signal name="response" handler="gtk_widget_hide" swapped="no"/>
     <child>
       <placeholder/>
     </child>
@@ -25,12 +26,12 @@
             <property name="margin_bottom">5</property>
             <property name="layout_style">end</property>
             <child>
-              <object class="GtkButton">
+              <object class="GtkButton" id="btn_reset">
                 <property name="label" translatable="yes">Reset</property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="receives_default">True</property>
-                <signal name="clicked" handler="on_prefer_reset_clicked" swapped="no"/>
+                <signal name="clicked" handler="on_prefer_btn_reset_clicked" swapped="no"/>
               </object>
               <packing>
                 <property name="expand">True</property>
@@ -39,12 +40,12 @@
               </packing>
             </child>
             <child>
-              <object class="GtkButton">
+              <object class="GtkButton" id="btn_apply">
                 <property name="label" translatable="yes">Apply</property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="receives_default">True</property>
-                <signal name="clicked" handler="on_prefer_apply_clicked" swapped="no"/>
+                <signal name="clicked" handler="on_prefer_btn_apply_clicked" swapped="no"/>
               </object>
               <packing>
                 <property name="expand">True</property>

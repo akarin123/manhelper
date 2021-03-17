@@ -28,7 +28,7 @@ namespace ManHelper
 
         private static int zoom_min = 10;
         private static int zoom_max = 990;
-        internal uint32 default_font_size;
+        //internal uint32 default_font_size;
 
         private MainWin win;
 
@@ -46,54 +46,57 @@ namespace ManHelper
         public PageZoomer(MainWin win)
         {
             this.win = win;
-            var view = win.view_current;
-            var settings = view.get_settings();
-
-            this.default_font_size = settings.get_default_font_size();
+            //var view = win.view_current;
+            //var settings = view.get_settings();
+            //this.default_font_size = settings.get_default_font_size();
         }
 
         [GtkCallback]
-        void on_btn_up_clicked(Gtk.Button self)
+        private void on_btn_up_clicked(Gtk.Button self)
         {
             this.zoom_ratio = int.min(this.zoom_ratio+this.zoom_step,PageZoomer.zoom_max);
             update_zoom_entry();
         }
 
         [GtkCallback]
-        void on_btn_down_clicked(Gtk.Button self)
+        private void on_btn_down_clicked(Gtk.Button self)
         {
             this.zoom_ratio = int.max(this.zoom_ratio-this.zoom_step,PageZoomer.zoom_min);
             update_zoom_entry();
         }
 
         [GtkCallback]
-        void on_btn_fit_clicked(Gtk.Button self)
+        private void on_btn_fit_clicked(Gtk.Button self)
         {
             this.zoom_ratio = 100;
             update_zoom_entry();
         }
         
-        void update_zoom_entry()
+        internal void update_zoom_entry()
         {
             this.entry_zoom.set_text(this.zoom_ratio.to_string());
             this.entry_zoom.changed();
         }
 
         [GtkCallback]
-        void on_entry_zoom_changed(Gtk.Editable self)
+        private void on_entry_zoom_changed(Gtk.Editable self)
         {
             double ratio;
-            //uint32 font_size;
+            //uint32 default_font_size;
             uint32 font_size_new;
             int zoom_ratio_raw;
 
             var view = this.win.view_current;
             var settings = view.get_settings();
 
+            //ratio  = zoom_ratio/100.0;
+            //default_font_size = (uint32)(Math.round(settings.get_default_font_size()/ratio));
+            //print(default_font_size.to_string()+"\n");
             zoom_ratio_raw = int.parse(this.entry_zoom.get_text());
-            zoom_ratio = zoom_ratio_raw.clamp(PageZoomer.zoom_min,PageZoomer.zoom_max);
+            zoom_ratio = zoom_ratio_raw.clamp(PageZoomer.zoom_min,PageZoomer.zoom_max); /* update zoom ratio */
             ratio  = zoom_ratio/100.0;
-            font_size_new = (uint32)(Math.round(this.default_font_size*ratio));
+            
+            font_size_new = (uint32)(Math.round(this.win.init_font_size*ratio));
             
             settings.set_default_font_size(font_size_new);
             view.set_settings(settings);

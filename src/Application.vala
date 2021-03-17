@@ -90,6 +90,9 @@ namespace ManHelper
         [GtkChild]
         private Gtk.Box box_page_zoomer;
 
+        internal string init_font_family = null;
+        internal uint32 init_font_size = 0;
+
         internal MainWin(App app)
         {
             Object(application: app,title: main_title);
@@ -102,6 +105,7 @@ namespace ManHelper
 
             this.home_uri = "http://localhost/cgi-bin/man/man2html";
             this.view_current.load_uri(home_uri);  
+            //this.start_font_size = this.view_current.get_settings().get_default_font_size();
 
             /* pack the page_zoomer after Webkit view */
             this.page_zoomer = new PageZoomer(this);
@@ -110,7 +114,8 @@ namespace ManHelper
             var bookmarks_dirpath = app.bookmarks_parent_dir+app.bookmarks_directory;
             this.app.bookmarks_db = new DataBase(bookmarks_dirpath,app.bookmarks_filename);
 
-            prefer_dialog = new PreferDialog(this);
+            var prefer_dialog = new PreferDialog(this); /* init font size and family */
+            prefer_dialog.hide();
         }
 
         /* guess the height of title bar*/
