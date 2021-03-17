@@ -135,7 +135,12 @@ namespace ManHelper
                 btn_close.set_data<int>(page_no,ii); /* Decrease the page_no by 1 */
                 Gtk.Label page_label = btn_close.get_data<Gtk.Label>("label");
 
-                page_label.set_text(page_label_text(ii));
+                var label = page_label.get_text();
+                var pattern = "^Page [0-9]+$";
+                if (Regex.match_simple(pattern,label))
+                {
+                    page_label.set_text(page_label_text(ii));
+                }
             }
             
             this.remove_page(page_index-1);
