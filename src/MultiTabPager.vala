@@ -70,7 +70,6 @@ namespace ManHelper
             image_close.get_icon_name(out icon_name,out icon_size);
             image_dup.set_from_icon_name(icon_name,icon_size);
             btn_page_close.set_image(image_dup);
-            //print(icon_name+"\n");
             
             btn_page_close.set_relief(Gtk.ReliefStyle.NONE);
             label_box.pack_start(page_label,false,true,0);
@@ -88,8 +87,7 @@ namespace ManHelper
             new_scrolled.add(new_view);
             new_scrolled.set_data<WebKit.WebView>("view",new_view);
             new_scrolled.set_data<Gtk.Button>("button",btn_page_close);
-            
-            //print(res.to_string()+"\n");
+
             new_scrolled.show_all();
             label_box.show_all();
 
@@ -154,9 +152,9 @@ namespace ManHelper
         [GtkCallback]
         private void on_page_switched(Gtk.Widget page,uint page_num)
         {
-            //print("hello!\n");
             win.view_current = page.get_data<WebKit.WebView>("view");
 
+            win.page_zoomer.entry_zoom.changed();
            //win.view_current.load_uri("https://developer.gnome.org/icon-naming-spec/");
         }
     }

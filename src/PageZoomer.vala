@@ -75,11 +75,19 @@ namespace ManHelper
         internal void update_zoom_entry()
         {
             this.entry_zoom.set_text(this.zoom_ratio.to_string());
-            this.entry_zoom.changed();
+
+            update_view_zoom();
         }
 
         [GtkCallback]
         private void on_entry_zoom_changed(Gtk.Editable self)
+        {
+            uint interval = 300;
+
+            Timeout.add(interval,()=>{update_view_zoom();return Source.REMOVE;});
+        }
+        
+        private void update_view_zoom()
         {
             double ratio;
             //uint32 default_font_size;
@@ -89,9 +97,6 @@ namespace ManHelper
             var view = this.win.view_current;
             var settings = view.get_settings();
 
-            //ratio  = zoom_ratio/100.0;
-            //default_font_size = (uint32)(Math.round(settings.get_default_font_size()/ratio));
-            //print(default_font_size.to_string()+"\n");
             zoom_ratio_raw = int.parse(this.entry_zoom.get_text());
             zoom_ratio = zoom_ratio_raw.clamp(PageZoomer.zoom_min,PageZoomer.zoom_max); /* update zoom ratio */
             ratio  = zoom_ratio/100.0;
