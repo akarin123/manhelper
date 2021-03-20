@@ -229,7 +229,7 @@ namespace ManHelper
         private void on_entry_search_changed(Gtk.SearchEntry self)
         {
             string text = self.get_text();
-            const int long_cmd = 6;
+            const int long_cmd = 5;
             //List<Gtk.MenuItem> menu_items; 
             KeywordList old_list;
 

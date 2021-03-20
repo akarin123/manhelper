@@ -100,7 +100,7 @@ namespace ManHelper
             uint32 font_size_new;
             var settings = new_view.get_settings();
             var page_zoomer = this.win.page_zoomer;
-            ratio  = uint.parse(page_zoomer.entry_zoom.get_text())/100.0;
+            ratio  = int.parse(page_zoomer.entry_zoom.get_text())/100.0;
             font_size_new = (uint32)(Math.round(this.win.init_font_size*ratio));
             
             settings.set_default_font_size(font_size_new);

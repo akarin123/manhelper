@@ -26,16 +26,17 @@ namespace ManHelper
         private MainWin win;
         private WebKit.WebView view = null;
         private ThemeDialog theme_dialog = null;
-        //private string init_font_family = null;
-        //private uint32 init_font_size = 0;
 
         [GtkChild]
-        internal Gtk.FontButton btn_font;
+        private Gtk.FontButton btn_font;
         [GtkChild]
-        internal Gtk.ColorButton btn_backcolor;
+        private Gtk.ColorButton btn_backcolor;
 
         [GtkChild]
-        internal Gtk.Button btn_apply;
+        private Gtk.Button btn_apply;
+
+        [GtkChild]
+        private Gtk.CheckButton btn_startup;
 
         public PreferDialog(MainWin win)
         {
@@ -88,7 +89,6 @@ namespace ManHelper
             }
 
             var font_desc = new Pango.FontDescription();
-            //btn_font.set_font_desc(font_desc);
 
             font_desc.set_family(default_font_family);
             font_desc.set_size((int)default_font_size*Pango.SCALE);
@@ -96,7 +96,6 @@ namespace ManHelper
             btn_font.set_font_desc(font_desc);
             // need work on theme button
             
-            //print(btn_font.get_font_desc().get_size().to_string()+"\n");
             btn_backcolor.set_rgba(default_backcolor);
         }
 
@@ -120,7 +119,6 @@ namespace ManHelper
         {
             // stub
             Gdk.RGBA init_backcolor = {};
-            //var settings = this.view.get_settings();
 
             var init_font_desc = new Pango.FontDescription();
 
@@ -154,13 +152,20 @@ namespace ManHelper
             settings.set_default_font_size(font_size/Pango.SCALE);
             settings.set_default_font_family(font_family);
 
-            /* update page zoomer */
+            /*update page zoomer*/
             double font_size_scaled = font_size/Pango.SCALE*1.0; /* ensure it is of double type */
             this.win.page_zoomer.zoom_ratio = (int)Math.round(font_size_scaled/this.win.init_font_size*100);
             this.win.page_zoomer.update_zoom_entry();
 
             var backcolor = this.btn_backcolor.get_rgba();
             this.view.set_background_color(backcolor);
+
+            /*check whether change startup options*/
+            if (btn_startup.get_active())
+            {
+                // stub
+                // need further work use libgda
+            }
         }
     }
 
