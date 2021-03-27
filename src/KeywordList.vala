@@ -46,26 +46,24 @@ namespace ManHelper
         private int menu_item_height = -1;
 
 
-        public KeywordList(MainWin win, string keyword/*, int width*/)
+        public KeywordList(MainWin win, string keyword)
         {
             this.win = win;
-            this.keyword = keyword;
+            this.keyword = keyword.replace("\\","");  /* avoid syntax error for man -k <keyword> */
 
             try 
             {
-                Process.spawn_command_line_sync ("man -k "+"\""+keyword+"\"",out man_stdout,out man_stderr,out man_status);
+                Process.spawn_command_line_sync ("man -k "+"\""+this.keyword+"\"",out man_stdout,out man_stderr,out man_status);
             } 
             catch (SpawnError e) 
             {
                 message(e.message);
             }
             man_entries = man_stdout.split("\n");
-            //print(man_stdout);
-            //print("Found %d entries\n",man_entries.length);
             
             if (man_entries.length>0)
             {
-                find_num = man_entries.length-1; /* string.split() will add a "\n" string in the last */
+                find_num = man_entries.length-1; /* string.split() will add an extra "\n" string at the end */
                 man_entries=man_entries[0:find_num];
             }
             
@@ -94,14 +92,13 @@ namespace ManHelper
             else
             {
                 this.height_request = menu_item_height * int.min(find_num,max_show);
-                //print("Height request %d\n",this.height_request);
             }
             
             this.set_attached_to(win);
             this.width_request = win.entry_search.get_allocated_width();
 
             update_keyword_list_pos(win);
-            //this.move(this.x_list,this.y_list);
+
             Timeout.add(150,()=>{update_keyword_list_geom(this.win);return Source.CONTINUE;});
 
             this.set_transient_for(win);
@@ -111,7 +108,7 @@ namespace ManHelper
         {
             Gtk.Allocation entry_allcation;
             Gdk.Window search_list_gdkwin;
-            //win.search_list.show_all();
+
             if (this.get_realized())
             {
                 win.entry_search.get_allocation(out entry_allcation);
@@ -228,14 +225,10 @@ namespace ManHelper
         [GtkCallback]
         private bool mouse_leave_keyword_list(Gtk.Widget self,Gdk.Event evnt)
         {
-            //print("mouse here!\n"+Time.local(time_t()).to_string()+"\n");
             Gdk.EventCrossing evnt_cross;
             
             evnt_cross = evnt.crossing;
             var x = evnt_cross.x;
-            /* y value from EventCrossing incorrect, why?*/
-            //var y = evnt_cross.y;
-            //print(@"mouse here! $(x),$(y). "+Time.local(time_t()).to_string()+"\n");
 
             if ((last_selected!=null)&&((x<=0)||(x>=this.get_allocated_width())))
             {   

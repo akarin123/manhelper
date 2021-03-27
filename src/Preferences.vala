@@ -134,7 +134,7 @@ namespace ManHelper
 
             btn_font.set_font_desc(init_font_desc);
 
-            init_backcolor.parse("rgba(100%,100%,100%,1)"); /* back to white */
+            init_backcolor.parse("rgb(255,255,255)"); /* back to white */
             btn_backcolor.set_rgba(init_backcolor);
             btn_apply.clicked();
         }
@@ -145,7 +145,7 @@ namespace ManHelper
         {
             // stub
             var settings = this.view.get_settings();
-            var font_desc = btn_font.get_font_desc();
+            var font_desc = this.btn_font.get_font_desc();
             var font_size = font_desc.get_size();
             var font_family = font_desc.get_family();
 
@@ -164,8 +164,61 @@ namespace ManHelper
             if (btn_startup.get_active())
             {
                 // stub
-                // need further work use libgda
+                // need further work using json
+                //Json.Object startup_options;
+                App app = this.win.app;
+                save_startup_options(app);
             }
+        }
+
+        private void save_startup_options(App app)
+        {
+            var builder = new Json.Builder();
+            
+            var font_desc = this.btn_font.get_font_desc();
+            var font_size = font_desc.get_size();
+            var font_family = font_desc.get_family();
+            var backcolor = this.btn_backcolor.get_rgba();
+
+            builder.begin_object ();
+            builder.set_member_name ("font-family");
+            builder.add_string_value (font_family.to_string());
+
+            builder.set_member_name ("font-size");
+            builder.add_string_value ((font_size/Pango.SCALE).to_string());
+
+
+            builder.set_member_name ("background");
+            builder.add_string_value (backcolor.to_string());
+            
+            builder.end_object ();
+            
+            var generator = new Json.Generator();
+            var root = builder.get_root();
+
+            generator.set_root(root);
+
+            //var test_str = generator.to_data(null);
+            //print(test_str+"\n");
+
+            /* store in the same directory with bookmarks */
+            var bookmarks_dirpath = app.bookmarks_parent_dir+app.bookmarks_directory;
+            var startup_filepath = Path.build_filename(bookmarks_dirpath,app.startup_filename);
+            
+            //print(startup_filepath+"\n");
+            try
+            {
+                generator.to_file(startup_filepath);
+            }
+            catch (Error e)
+            {
+                message(e.message);
+            }
+        }
+
+        internal void load_startup_options(App app)
+        {
+            // need further work
         }
     }
 

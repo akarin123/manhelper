@@ -24,7 +24,9 @@ namespace ManHelper
     {    
         public uint section_num_max {get;default=9;}
         public MainWin win;
-        //public string bookmarks_file {set;get;default="SQLite://DB_DIR=~/.manhelper;DB_NAME=bookmarks";}
+
+        internal string startup_filename {set;get;default="startup.js";}
+
         internal string bookmarks_parent_dir {set;get;default=".";}
         internal string bookmarks_directory {set;get;default="/.manhelper";}
         internal string bookmarks_filename {set;get;default="bookmarks";}
