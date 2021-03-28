@@ -117,6 +117,7 @@ namespace ManHelper
             this.app.bookmarks_db = new DataBase(bookmarks_dirpath,app.bookmarks_filename);
 
             var prefer_dialog = new PreferDialog(this); /* init font size and family */
+            PreferDialog.load_startup_options(app);
             prefer_dialog.hide();
         }
 

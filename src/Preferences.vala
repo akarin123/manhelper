@@ -45,7 +45,6 @@ namespace ManHelper
             
             var settings = view.get_settings();
             prefer_load_settings(settings);
-
             //this.default_font_size = settings.get_default_font_size();
         }   
         
@@ -112,7 +111,6 @@ namespace ManHelper
                 this.theme_dialog.present();
             }
         }
-
 
         [GtkCallback]
         private void on_prefer_btn_reset_clicked(Gtk.Button self)
@@ -215,10 +213,38 @@ namespace ManHelper
                 message(e.message);
             }
         }
-
-        internal void load_startup_options(App app)
+        
+        internal static void load_startup_options(App app)
         {
-            // need further work
+            var parser = new Json.Parser();
+
+            var bookmarks_dirpath = app.bookmarks_parent_dir+app.bookmarks_directory;
+            var startup_filepath = Path.build_filename(bookmarks_dirpath,app.startup_filename);
+            
+            if (FileUtils.test(startup_filepath,FileTest.EXISTS))
+            {
+                try
+                {
+                    parser.load_from_file(startup_filepath);
+    
+                    var root = parser.get_root();
+                    var obj = root.get_object();
+
+                    // need further work
+                    var font_family = obj.get_member("font-family").get_string();
+                    var font_size = obj.get_member("font-size").get_string();
+                    var backcolor = obj.get_member("background").get_string();
+                    print("%s\n%s\n%s\n",font_family,font_size,backcolor);
+                }
+                catch (Error e)
+                {
+                    message(e.message);
+                }
+            }
+            else
+            {
+                return;
+            }
         }
     }
 
