@@ -1,4 +1,4 @@
-project('com.github.manhelper', 'vala', 'c', version: '0.1.0')
+project('com.github.manhelper', 'vala', 'c', version: '0.2.0')
 
 cc = meson.get_compiler('c')
 m_dep = cc.find_library('m', required : false)
@@ -20,6 +20,7 @@ dependencies = [
     dependency('libsoup-2.4'),
     dependency('libgda-5.0'),
     dependency('libxml-2.0'),
+    dependency('json-glib-1.0'),
     m_dep,
 ]
 
