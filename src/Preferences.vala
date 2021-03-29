@@ -18,7 +18,7 @@
 */
 
 namespace ManHelper
-{   
+{
     /*Add preferences dialog*/
     [GtkTemplate (ui = "/ui/prefer_dialog.ui")]
     internal class PreferDialog: Gtk.Dialog
@@ -140,7 +140,6 @@ namespace ManHelper
         [GtkCallback]
         private void on_prefer_btn_apply_clicked(Gtk.Button self)
         {
-            // stub
             var settings = this.view.get_settings();
             var font_desc = this.btn_font.get_font_desc();
             var font_size = font_desc.get_size();
@@ -160,9 +159,6 @@ namespace ManHelper
             /*check whether change startup options*/
             if (btn_startup.get_active())
             {
-                // stub
-                // need further work using json
-                //Json.Object startup_options;
                 App app = this.win.app;
                 save_startup_options(app);
             }
@@ -184,7 +180,6 @@ namespace ManHelper
             builder.set_member_name ("font-size");
             builder.add_string_value ((font_size/Pango.SCALE).to_string());
 
-
             builder.set_member_name ("background");
             builder.add_string_value (backcolor.to_string());
             
@@ -194,9 +189,6 @@ namespace ManHelper
             var root = builder.get_root();
 
             generator.set_root(root);
-
-            //var test_str = generator.to_data(null);
-            //print(test_str+"\n");
 
             /* store in the same directory with bookmarks */
             var bookmarks_dirpath = app.bookmarks_parent_dir+app.bookmarks_directory;
