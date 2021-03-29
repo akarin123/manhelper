@@ -115,7 +115,6 @@ namespace ManHelper
         [GtkCallback]
         private void on_prefer_btn_reset_clicked(Gtk.Button self)
         {
-            // stub
             Gdk.RGBA init_backcolor = {};
 
             var init_font_desc = new Pango.FontDescription();
@@ -214,7 +213,7 @@ namespace ManHelper
             }
         }
         
-        internal static void load_startup_options(App app)
+        internal void load_startup_options(App app)
         {
             var parser = new Json.Parser();
 
@@ -230,11 +229,23 @@ namespace ManHelper
                     var root = parser.get_root();
                     var obj = root.get_object();
 
-                    // need further work
                     var font_family = obj.get_member("font-family").get_string();
-                    var font_size = obj.get_member("font-size").get_string();
-                    var backcolor = obj.get_member("background").get_string();
-                    print("%s\n%s\n%s\n",font_family,font_size,backcolor);
+                    var font_size_str = obj.get_member("font-size").get_string();
+                    var backcolor_str = obj.get_member("background").get_string();
+                    //print("%s\n%s\n%s\n",font_family,font_size,backcolor);
+                    var font_size = int.parse(font_size_str);
+
+                    var font_desc = new Pango.FontDescription();
+                    font_desc.set_family(font_family);
+                    font_desc.set_size((int)font_size*Pango.SCALE);
+                    
+                    btn_font.set_font_desc(font_desc);
+                    
+                    Gdk.RGBA backcolor = {};
+                    backcolor.parse(backcolor_str);
+                    btn_backcolor.set_rgba(backcolor);
+      
+                    btn_apply.clicked();
                 }
                 catch (Error e)
                 {
