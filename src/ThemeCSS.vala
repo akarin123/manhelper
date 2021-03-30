@@ -19,15 +19,56 @@
 
 namespace ManHelper
 {
-    public class PageCSS:Object
+    internal class ThemeCSS:Object
     {
-        public PageCSS()
+        private Gdk.RGBA title_rgba;
+        private Gdk.RGBA header_rgba;
+        private Gdk.RGBA regular_rgba;
+        private Gdk.RGBA bold_rgba;
+        private Gdk.RGBA italic_rgba;
+
+        private ThemeDialog theme_dialog;
+
+        public ThemeCSS(ThemeDialog theme_dialog)
+        {
+            this.theme_dialog = theme_dialog;
+
+            title_rgba = this.theme_dialog.btn_title.get_rgba();
+            header_rgba = this.theme_dialog.btn_header.get_rgba();
+            regular_rgba = this.theme_dialog.btn_regular.get_rgba();
+            bold_rgba = this.theme_dialog.btn_bold.get_rgba();
+            italic_rgba = this.theme_dialog.btn_italic.get_rgba();
+        }
+
+        private void set_theme_CSS()
         {
         }
 
         public string to_string()
         {
-            return "place_holder";
+            // need further work
+            StringBuilder str_builder;
+
+            str_builder = new StringBuilder();
+
+            str_builder.append("""<style type="text/css">"""+"\n");
+            
+            var title_cstr = title_rgba.to_string();
+            var header_cstr = header_rgba.to_string();
+            var regular_cstr = regular_rgba.to_string();
+            var bold_cstr = bold_rgba.to_string();
+            var italic_cstr = italic_rgba.to_string();
+
+            str_builder.append(title_cstr+"\n");
+            str_builder.append(header_cstr+"\n");
+            str_builder.append(regular_cstr+"\n");
+            str_builder.append(bold_cstr+"\n");
+            str_builder.append(italic_cstr+"\n");
+
+            str_builder.append("""</style>"""+"\n");
+            //print("%s\n%s\n%s\n%s\n%s\n",title_cstr,header_cstr,regular_cstr,bold_cstr,italic_cstr);
+
+            return str_builder.str;
         }
     }
 }

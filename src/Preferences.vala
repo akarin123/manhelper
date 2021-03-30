@@ -253,10 +253,21 @@ namespace ManHelper
 
     /*Add text color theme dialog*/
     [GtkTemplate (ui = "/ui/theme_dialog.ui")]
-    private class ThemeDialog: Gtk.Dialog
+    internal class ThemeDialog: Gtk.Dialog
     {
         private PreferDialog prefer_dialog = null;
         private WebKit.WebView view = null;
+
+        [GtkChild]
+        internal Gtk.ColorButton btn_title;
+        [GtkChild]
+        internal Gtk.ColorButton btn_header;
+        [GtkChild]
+        internal Gtk.ColorButton btn_regular;
+        [GtkChild]
+        internal Gtk.ColorButton btn_bold;
+        [GtkChild]
+        internal Gtk.ColorButton btn_italic;
 
         public ThemeDialog(PreferDialog prefer_dialog, WebKit.WebView view)
         {
@@ -269,6 +280,14 @@ namespace ManHelper
         private void theme_load_settings(WebKit.WebView view)
         {
             
-        } 
+        }
+        
+        [GtkCallback]
+        private void on_theme_btn_ok_clicked(Gtk.Button self)
+        {
+            var theme_css = new ThemeCSS(this);
+            print(theme_css.to_string());
+            this.destroy();
+        }
     }
 }

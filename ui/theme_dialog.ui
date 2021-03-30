@@ -42,6 +42,7 @@
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="receives_default">True</property>
+                <signal name="clicked" handler="on_theme_btn_ok_clicked" swapped="no"/>
               </object>
               <packing>
                 <property name="expand">True</property>
@@ -109,7 +110,7 @@
               </packing>
             </child>
             <child>
-              <object class="GtkColorButton">
+              <object class="GtkColorButton" id="btn_title">
                 <property name="width_request">100</property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
@@ -123,7 +124,7 @@
               </packing>
             </child>
             <child>
-              <object class="GtkColorButton">
+              <object class="GtkColorButton" id="btn_header">
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="receives_default">True</property>
@@ -135,7 +136,7 @@
               </packing>
             </child>
             <child>
-              <object class="GtkColorButton">
+              <object class="GtkColorButton" id="btn_regular">
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="receives_default">True</property>
@@ -147,7 +148,7 @@
               </packing>
             </child>
             <child>
-              <object class="GtkColorButton">
+              <object class="GtkColorButton" id="btn_bold">
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="receives_default">True</property>
@@ -159,7 +160,7 @@
               </packing>
             </child>
             <child>
-              <object class="GtkColorButton">
+              <object class="GtkColorButton" id="btn_italic">
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="receives_default">True</property>

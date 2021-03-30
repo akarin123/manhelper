@@ -69,8 +69,7 @@ namespace ManHelper
         public App app;     
         public const string main_title = "Man Helper";
         private string home_uri;
-        //internal uint section_num_max;
-        //internal int height_header;
+
         internal string last_entry_text {set;get;default="";} 
         internal KeywordList search_list = null;
         internal Gtk.FileChooserDialog file_chooser = null;
@@ -207,6 +206,7 @@ namespace ManHelper
 
             if (!entry_found)
             {
+                // should limit the time for showing this tooltip 
                 this.set_tooltip_text("No man page for "+entry_text);
                 this.trigger_tooltip_query();
             }
