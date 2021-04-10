@@ -122,7 +122,7 @@ namespace ManHelper
             prefer_dialog.load_startup_options(app);
             prefer_dialog.hide();
 
-            this.theme_CSS = new ThemeCSS();
+            //this.theme_CSS = new ThemeCSS();
         }
 
         /* guess the height of title bar*/

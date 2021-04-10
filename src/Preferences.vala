@@ -23,9 +23,9 @@ namespace ManHelper
     [GtkTemplate (ui = "/ui/prefer_dialog.ui")]
     internal class PreferDialog: Gtk.Dialog
     {
-        private MainWin win;
-        private WebKit.WebView view = null;
-        private ThemeDialog theme_dialog = null;
+        internal MainWin win = null;
+        internal WebKit.WebView view = null;
+        internal ThemeDialog theme_dialog = null;
 
         [GtkChild]
         private Gtk.FontButton btn_font;
@@ -163,6 +163,11 @@ namespace ManHelper
                 App app = this.win.app;
                 save_startup_options(app);
             }
+
+            if (this.win.theme_CSS!=null)
+            {
+                this.win.theme_CSS.set_theme_CSS();
+            }
         }
 
         private void save_startup_options(App app)
@@ -280,18 +285,32 @@ namespace ManHelper
 
         private void theme_load_settings(WebKit.WebView view)
         {
+            var theme_CSS = this.prefer_dialog.win.theme_CSS;
 
+            if (theme_CSS!=null)
+            {
+                //print("load theme\n");
+                var title_rgba = theme_CSS.title_rgba;
+                var heading_rgba = theme_CSS.heading_rgba;
+                var regular_rgba = theme_CSS.regular_rgba;
+                var bold_rgba = theme_CSS.bold_rgba;
+                var italic_rgba = theme_CSS.italic_rgba;
+                
+                btn_title.set_rgba(title_rgba);
+                btn_heading.set_rgba(heading_rgba);
+                btn_regular.set_rgba(regular_rgba);
+                btn_bold.set_rgba(bold_rgba);
+                btn_italic.set_rgba(italic_rgba);
+            }
         }
         
         [GtkCallback]
         private void on_theme_btn_ok_clicked(Gtk.Button self)
         {
-            //var theme_css = new ThemeCSS(this);
-            var theme_css = new ThemeCSS.from_theme(this);
+            var theme_CSS = new ThemeCSS.from_theme(this);
             //print(theme_css.to_string());
 
-            theme_css.set_theme_CSS.begin();
-
+            this.prefer_dialog.win.theme_CSS = theme_CSS; 
             this.hide();
         }
     }

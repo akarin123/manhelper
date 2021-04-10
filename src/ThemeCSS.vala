@@ -21,11 +21,11 @@ namespace ManHelper
 {
     internal class ThemeCSS:Object
     {
-        private Gdk.RGBA title_rgba = {};
-        private Gdk.RGBA heading_rgba = {};
-        private Gdk.RGBA regular_rgba = {};
-        private Gdk.RGBA bold_rgba = {};
-        private Gdk.RGBA italic_rgba = {};
+        internal Gdk.RGBA title_rgba = {};
+        internal Gdk.RGBA heading_rgba = {};
+        internal Gdk.RGBA regular_rgba = {};
+        internal Gdk.RGBA bold_rgba = {};
+        internal Gdk.RGBA italic_rgba = {};
 
         private ThemeDialog theme_dialog = null;
 
@@ -51,7 +51,7 @@ namespace ManHelper
             italic_rgba = this.theme_dialog.btn_italic.get_rgba();
         }
 
-        public async void set_theme_CSS()
+        public void set_theme_CSS()
         {
             // need further work using Javascript
             var view = this.theme_dialog.view;
