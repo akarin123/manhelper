@@ -7,7 +7,7 @@
     <property name="resizable">False</property>
     <property name="type_hint">dialog</property>
     <property name="program_name">Man Helper</property>
-    <property name="version">0.1.0</property>
+    <property name="version">0.2.0</property>
     <property name="copyright" translatable="yes">Copyright © 2021 XX Wu.</property>
     <property name="authors">XX Wu</property>
     <property name="logo_icon_name">image-missing</property>

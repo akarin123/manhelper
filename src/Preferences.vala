@@ -104,10 +104,11 @@ namespace ManHelper
             if ((this.theme_dialog==null)||(!this.theme_dialog.get_realized()))
             {
                 this.theme_dialog = new ThemeDialog(this,this.view);
+                
                 this.theme_dialog.show_all();
             }
             else
-            {   
+            {
                 this.theme_dialog.present();
             }
         }
@@ -236,7 +237,7 @@ namespace ManHelper
                     Gdk.RGBA backcolor = {};
                     backcolor.parse(backcolor_str);
                     btn_backcolor.set_rgba(backcolor);
-      
+                    
                     btn_apply.clicked();
                 }
                 catch (Error e)
@@ -255,13 +256,13 @@ namespace ManHelper
     [GtkTemplate (ui = "/ui/theme_dialog.ui")]
     internal class ThemeDialog: Gtk.Dialog
     {
-        private PreferDialog prefer_dialog = null;
-        private WebKit.WebView view = null;
+        internal PreferDialog prefer_dialog = null;
+        internal WebKit.WebView view = null;
 
         [GtkChild]
         internal Gtk.ColorButton btn_title;
         [GtkChild]
-        internal Gtk.ColorButton btn_header;
+        internal Gtk.ColorButton btn_heading;
         [GtkChild]
         internal Gtk.ColorButton btn_regular;
         [GtkChild]
@@ -279,15 +280,19 @@ namespace ManHelper
 
         private void theme_load_settings(WebKit.WebView view)
         {
-            
+
         }
         
         [GtkCallback]
         private void on_theme_btn_ok_clicked(Gtk.Button self)
         {
-            var theme_css = new ThemeCSS(this);
-            print(theme_css.to_string());
-            this.destroy();
+            //var theme_css = new ThemeCSS(this);
+            var theme_css = new ThemeCSS.from_theme(this);
+            //print(theme_css.to_string());
+
+            theme_css.set_theme_CSS.begin();
+
+            this.hide();
         }
     }
 }

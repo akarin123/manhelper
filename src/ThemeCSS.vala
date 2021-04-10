@@ -21,52 +21,80 @@ namespace ManHelper
 {
     internal class ThemeCSS:Object
     {
-        private Gdk.RGBA title_rgba;
-        private Gdk.RGBA header_rgba;
-        private Gdk.RGBA regular_rgba;
-        private Gdk.RGBA bold_rgba;
-        private Gdk.RGBA italic_rgba;
+        private Gdk.RGBA title_rgba = {};
+        private Gdk.RGBA heading_rgba = {};
+        private Gdk.RGBA regular_rgba = {};
+        private Gdk.RGBA bold_rgba = {};
+        private Gdk.RGBA italic_rgba = {};
 
-        private ThemeDialog theme_dialog;
+        private ThemeDialog theme_dialog = null;
 
-        public ThemeCSS(ThemeDialog theme_dialog)
+        public ThemeCSS()
+        {
+            var black = "rgb(0,0,0)";
+
+            title_rgba.parse(black);
+            heading_rgba.parse(black);
+            regular_rgba.parse(black);
+            bold_rgba.parse(black);
+            italic_rgba.parse(black);
+        }
+
+        public ThemeCSS.from_theme(ThemeDialog theme_dialog)
         {
             this.theme_dialog = theme_dialog;
 
             title_rgba = this.theme_dialog.btn_title.get_rgba();
-            header_rgba = this.theme_dialog.btn_header.get_rgba();
+            heading_rgba = this.theme_dialog.btn_heading.get_rgba();
             regular_rgba = this.theme_dialog.btn_regular.get_rgba();
             bold_rgba = this.theme_dialog.btn_bold.get_rgba();
             italic_rgba = this.theme_dialog.btn_italic.get_rgba();
         }
 
-        private void set_theme_CSS()
+        public async void set_theme_CSS()
         {
+            // need further work using Javascript
+            var view = this.theme_dialog.view;
+
+            var css_str = this.to_string();
+            var java_script = @"var style = document.createElement('style'); style.innerHTML = '$(css_str)';document.head.appendChild(style)"; 
+            
+            /*
+            try 
+            {
+                print(java_script);
+                yield view.run_javascript(java_script);
+            } 
+            catch (Error e) 
+            {
+                message(e.message);
+
+                print("fail\n");
+            }*/
+            view.run_javascript.begin(java_script);
         }
 
         public string to_string()
         {
             // need further work
             StringBuilder str_builder;
-
             str_builder = new StringBuilder();
 
-            str_builder.append("""<style type="text/css">"""+"\n");
-            
             var title_cstr = title_rgba.to_string();
-            var header_cstr = header_rgba.to_string();
+            var heading_cstr = heading_rgba.to_string();
             var regular_cstr = regular_rgba.to_string();
             var bold_cstr = bold_rgba.to_string();
-            var italic_cstr = italic_rgba.to_string();
+            var italic_cstr = italic_rgba.to_string();            
 
-            str_builder.append(title_cstr+"\n");
-            str_builder.append(header_cstr+"\n");
-            str_builder.append(regular_cstr+"\n");
-            str_builder.append(bold_cstr+"\n");
-            str_builder.append(italic_cstr+"\n");
+            //str_builder.append("""<style type="text/css">"""+" ");
+            str_builder.append("h1 {color:"+title_cstr+"}"+" ");
+            str_builder.append("h2 {color:"+heading_cstr+"}"+" ");
+            str_builder.append("body {color:"+regular_cstr+"}"+" ");
+            str_builder.append("b {color:"+bold_cstr+"}"+" ");
+            str_builder.append("i {color:"+italic_cstr+"}"+" ");
 
-            str_builder.append("""</style>"""+"\n");
-            //print("%s\n%s\n%s\n%s\n%s\n",title_cstr,header_cstr,regular_cstr,bold_cstr,italic_cstr);
+            //str_builder.append("""</style>"""+" ");
+            //print("%s\n%s\n%s\n%s\n%s\n",title_cstr,heading_cstr,regular_cstr,bold_cstr,italic_cstr);
 
             return str_builder.str;
         }

@@ -79,6 +79,7 @@ namespace ManHelper
         internal WebKit.WebView view_current = null; 
         internal PageZoomer page_zoomer = null;
         internal PreferDialog prefer_dialog = null;
+        internal ThemeCSS theme_CSS = null;
 
         [GtkChild]
         private Gtk.Button btn_man;
@@ -105,8 +106,10 @@ namespace ManHelper
             //pager.first_scrolled.add_with_properties(view);
 
             this.home_uri = "http://localhost/cgi-bin/man/man2html";
-            this.view_current.load_uri(home_uri);  
-            //this.start_font_size = this.view_current.get_settings().get_default_font_size();
+            this.view_current.load_uri(home_uri);
+            //var settings = this.view_current.get_settings();
+            //print(settings.enable_javascript.to_string()+"\n");
+            //this.start_font_size = settings.get_default_font_size();
 
             /* pack the page_zoomer after Webkit view */
             this.page_zoomer = new PageZoomer(this);
@@ -118,6 +121,8 @@ namespace ManHelper
             var prefer_dialog = new PreferDialog(this); /* init font size and family */
             prefer_dialog.load_startup_options(app);
             prefer_dialog.hide();
+
+            this.theme_CSS = new ThemeCSS();
         }
 
         /* guess the height of title bar*/
