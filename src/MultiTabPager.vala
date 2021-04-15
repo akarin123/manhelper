@@ -27,13 +27,13 @@ namespace ManHelper
         string page_no = "page no.";
 
         [GtkChild]
-        internal Gtk.ScrolledWindow first_scrolled;
+        internal unowned Gtk.ScrolledWindow first_scrolled;
         [GtkChild]
-        internal Gtk.Label first_label;
+        internal unowned Gtk.Label first_label;
         [GtkChild]
-        internal Gtk.Button first_btn_close_page;
+        internal unowned Gtk.Button first_btn_close_page;
         [GtkChild]
-        internal Gtk.Image image_close;
+        internal unowned Gtk.Image image_close;
 
         public int n_pages {get {return this.get_n_pages();}}
         

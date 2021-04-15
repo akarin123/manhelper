@@ -28,15 +28,17 @@ namespace ManHelper
         internal ThemeDialog theme_dialog = null;
 
         [GtkChild]
-        private Gtk.FontButton btn_font;
+        private unowned Gtk.FontButton btn_font;
         [GtkChild]
-        private Gtk.ColorButton btn_backcolor;
+        private unowned Gtk.ColorButton btn_backcolor;
 
         [GtkChild]
-        private Gtk.Button btn_apply;
+        private unowned Gtk.Button btn_apply;
 
         [GtkChild]
-        private Gtk.CheckButton btn_startup;
+        private unowned Gtk.CheckButton btn_startup;
+        [GtkChild]
+        private unowned Gtk.CheckButton btn_applyall;
 
         public PreferDialog(MainWin win)
         {
@@ -149,7 +151,7 @@ namespace ManHelper
             settings.set_default_font_size(font_size/Pango.SCALE);
             settings.set_default_font_family(font_family);
 
-            /*update page zoomer*/
+            /* update page zoomer */
             double font_size_scaled = font_size/Pango.SCALE*1.0; /* ensure it is of double type */
             this.win.page_zoomer.zoom_ratio = (int)Math.round(font_size_scaled/this.win.init_font_size*100);
             this.win.page_zoomer.update_zoom_entry();
@@ -157,7 +159,7 @@ namespace ManHelper
             var backcolor = this.btn_backcolor.get_rgba();
             this.view.set_background_color(backcolor);
 
-            /*check whether change startup options*/
+            /* check whether change startup options */
             if (btn_startup.get_active())
             {
                 App app = this.win.app;
@@ -167,6 +169,13 @@ namespace ManHelper
             if (this.win.theme_CSS!=null)
             {
                 this.win.theme_CSS.set_theme_CSS();
+            }
+
+            /* apply to all views */
+            if (btn_applyall.get_active())
+            {
+                // need further work
+                print("apply to all views!\n");
             }
         }
 
@@ -188,7 +197,28 @@ namespace ManHelper
 
             builder.set_member_name ("background");
             builder.add_string_value (backcolor.to_string());
-            
+
+            if (this.theme_dialog==null)
+            {
+                var black = "rgb(0,0,0)";
+
+                builder.set_member_name ("theme-title");
+                builder.add_string_value (black);
+                builder.set_member_name ("theme-heading");
+                builder.add_string_value (black);
+                builder.set_member_name ("theme-regular");
+                builder.add_string_value (black);
+                builder.set_member_name ("theme-bold");
+                builder.add_string_value (black);
+                builder.set_member_name ("theme-italic");
+                builder.add_string_value (black);
+            }
+            else
+            {
+                // need further work
+            }
+
+
             builder.end_object ();
             
             var generator = new Json.Generator();
@@ -265,21 +295,21 @@ namespace ManHelper
         internal WebKit.WebView view = null;
 
         [GtkChild]
-        internal Gtk.ColorButton btn_title;
+        internal unowned Gtk.ColorButton btn_title;
         [GtkChild]
-        internal Gtk.ColorButton btn_heading;
+        internal unowned Gtk.ColorButton btn_heading;
         [GtkChild]
-        internal Gtk.ColorButton btn_regular;
+        internal unowned Gtk.ColorButton btn_regular;
         [GtkChild]
-        internal Gtk.ColorButton btn_bold;
+        internal unowned Gtk.ColorButton btn_bold;
         [GtkChild]
-        internal Gtk.ColorButton btn_italic;
+        internal unowned Gtk.ColorButton btn_italic;
 
         public ThemeDialog(PreferDialog prefer_dialog, WebKit.WebView view)
         {
             this.prefer_dialog = prefer_dialog;
             this.view = view;
-            
+
             theme_load_settings(view);
         }
 

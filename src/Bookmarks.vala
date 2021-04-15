@@ -24,7 +24,7 @@ namespace ManHelper
     {
 
         [GtkChild]
-        private Gtk.TreeView bookmarks_view;
+        private unowned Gtk.TreeView bookmarks_view;
 
         private MainWin win;
         private Gtk.ListStore list_store;

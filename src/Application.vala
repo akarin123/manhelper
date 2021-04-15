@@ -82,15 +82,15 @@ namespace ManHelper
         internal ThemeCSS theme_CSS = null;
 
         [GtkChild]
-        private Gtk.Button btn_man;
+        private unowned Gtk.Button btn_man;
         [GtkChild]
-        internal Gtk.SearchEntry entry_search;
+        internal unowned Gtk.SearchEntry entry_search;
         //[GtkChild]
         //internal Gtk.ScrolledWindow scrolled;
         [GtkChild]
-        private Gtk.Box box_mainwin;
+        private unowned Gtk.Box box_mainwin;
         [GtkChild]
-        private Gtk.Box box_page_zoomer;
+        private unowned Gtk.Box box_page_zoomer;
 
         internal string init_font_family = null;
         internal uint32 init_font_size = 0;
@@ -529,15 +529,15 @@ namespace ManHelper
     public class SearchDialog:Gtk.Dialog
     {
         [GtkChild]
-        private Gtk.Entry entry_find;
+        private unowned Gtk.Entry entry_find;
         [GtkChild]
-        private Gtk.CheckButton option_case;
+        private unowned Gtk.CheckButton option_case;
         [GtkChild]
-        private Gtk.CheckButton option_wrap;
+        private unowned Gtk.CheckButton option_wrap;
         [GtkChild]
-        private Gtk.Button btn_find_prev;
+        private unowned Gtk.Button btn_find_prev;
         [GtkChild]
-        private Gtk.Button btn_find_next;
+        private unowned Gtk.Button btn_find_next;
 
         private WebKit.WebView main_view;
         private WebKit.FindOptions _option = WebKit.FindOptions.NONE;

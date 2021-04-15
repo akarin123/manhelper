@@ -33,7 +33,7 @@ namespace ManHelper
         private MainWin win;
 
         [GtkChild]
-        internal Gtk.Entry entry_zoom;
+        internal unowned Gtk.Entry entry_zoom;
 
         /*
         [GtkChild]

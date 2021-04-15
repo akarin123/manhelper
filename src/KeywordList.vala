@@ -31,10 +31,10 @@ namespace ManHelper
         private Gtk.MenuItem last_selected = null;
 
         [GtkChild]
-        private Gtk.ScrolledWindow keywordscrolled;
+        private unowned Gtk.ScrolledWindow keywordscrolled;
 
         [GtkChild]
-        internal Gtk.MenuBar keywordmenu;
+        internal unowned Gtk.MenuBar keywordmenu;
         //private Gtk.Box keywordbox;
         private string man_stdout;
         private string man_stderr;
