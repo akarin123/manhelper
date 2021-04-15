@@ -94,6 +94,7 @@
                     <property name="language">c</property>
                     <property name="preview_text"/>
                     <property name="title" translatable="yes">Text Font</property>
+                    <property name="show_style">False</property>
                   </object>
                   <packing>
                     <property name="expand">True</property>
