@@ -198,7 +198,8 @@ namespace ManHelper
             builder.set_member_name ("background");
             builder.add_string_value (backcolor.to_string());
 
-            if (this.theme_dialog==null)
+            var theme_CSS = this.win.theme_CSS;
+            if (theme_CSS==null)
             {
                 var black = "rgb(0,0,0)";
 
@@ -215,7 +216,16 @@ namespace ManHelper
             }
             else
             {
-                // need further work
+                builder.set_member_name ("theme-title");
+                builder.add_string_value (theme_CSS.title_rgba.to_string());
+                builder.set_member_name ("theme-heading");
+                builder.add_string_value (theme_CSS.heading_rgba.to_string());
+                builder.set_member_name ("theme-regular");
+                builder.add_string_value (theme_CSS.regular_rgba.to_string());
+                builder.set_member_name ("theme-bold");
+                builder.add_string_value (theme_CSS.bold_rgba.to_string());
+                builder.set_member_name ("theme-italic");
+                builder.add_string_value (theme_CSS.italic_rgba.to_string());
             }
 
 
