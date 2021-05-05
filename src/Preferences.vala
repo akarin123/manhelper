@@ -168,6 +168,7 @@ namespace ManHelper
 
             if (this.win.theme_CSS!=null)
             {
+                //print("here!");
                 this.win.theme_CSS.set_theme_CSS();
             }
 
@@ -283,6 +284,27 @@ namespace ManHelper
                     backcolor.parse(backcolor_str);
                     btn_backcolor.set_rgba(backcolor);
                     
+                    /* load theme colors */
+                    var theme_title_str = obj.get_member("theme-title").get_string();
+                    var theme_heading_str = obj.get_member("theme-heading").get_string();
+                    var theme_regular_str = obj.get_member("theme-regular").get_string();
+                    var theme_bold_str = obj.get_member("theme-bold").get_string();
+                    var theme_italic_str = obj.get_member("theme-italic").get_string();
+                    //print("%p\n",this.win.theme_CSS);
+                    if (this.win.theme_CSS==null)
+                    {
+                        //print("new themeCSS here!");
+                        var startup_theme_CSS = new ThemeCSS();
+                        startup_theme_CSS.prefer_dialog = this;
+                        startup_theme_CSS.title_rgba.parse(theme_title_str);
+                        startup_theme_CSS.heading_rgba.parse(theme_heading_str);
+                        startup_theme_CSS.regular_rgba.parse(theme_regular_str);
+                        startup_theme_CSS.bold_rgba.parse(theme_bold_str);
+                        startup_theme_CSS.italic_rgba.parse(theme_italic_str);
+                        
+                        this.win.theme_CSS = startup_theme_CSS;
+                    }
+                    //print("apply here!");
                     btn_apply.clicked();
                 }
                 catch (Error e)

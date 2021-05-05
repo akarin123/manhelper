@@ -21,18 +21,19 @@ namespace ManHelper
 {
     internal class ThemeCSS:Object
     {
-        internal Gdk.RGBA title_rgba = {};
-        internal Gdk.RGBA heading_rgba = {};
-        internal Gdk.RGBA regular_rgba = {};
-        internal Gdk.RGBA bold_rgba = {};
-        internal Gdk.RGBA italic_rgba = {};
+        public Gdk.RGBA title_rgba = {};
+        public Gdk.RGBA heading_rgba = {};
+        public Gdk.RGBA regular_rgba = {};
+        public Gdk.RGBA bold_rgba = {};
+        public Gdk.RGBA italic_rgba = {};
 
         private ThemeDialog theme_dialog = null;
+        internal PreferDialog prefer_dialog = null;
 
         public ThemeCSS()
         {
             var black = "rgb(0,0,0)";
-
+            
             title_rgba.parse(black);
             heading_rgba.parse(black);
             regular_rgba.parse(black);
@@ -54,7 +55,21 @@ namespace ManHelper
         public void set_theme_CSS()
         {
             // need further work using Javascript
-            var view = this.theme_dialog.view;
+            //print("java script here!");
+            WebKit.WebView view = null;
+            if (this.theme_dialog!=null)
+            {
+                view = this.theme_dialog.view;
+            }
+            else if (this.prefer_dialog!=null)
+            {
+                //print("prefer!\n");
+                view = this.prefer_dialog.view;
+            }
+            else
+            {
+                return;
+            }
 
             var css_str = this.to_string();
             var java_script = @"var style = document.createElement('style'); style.innerHTML = '$(css_str)';document.head.appendChild(style)"; 
@@ -71,6 +86,8 @@ namespace ManHelper
 
                 print("fail\n");
             }*/
+            
+            // need further work here
             view.run_javascript.begin(java_script);
         }
 
