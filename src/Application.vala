@@ -89,8 +89,6 @@ namespace ManHelper
         //internal Gtk.ScrolledWindow scrolled;
         [GtkChild]
         private unowned Gtk.Box box_mainwin;
-        [GtkChild]
-        private unowned Gtk.Box box_page_zoomer;
 
         internal string init_font_family = null;
         internal uint32 init_font_size = 0;
@@ -113,7 +111,7 @@ namespace ManHelper
 
             /* pack the page_zoomer after Webkit view */
             this.page_zoomer = new PageZoomer(this);
-            box_page_zoomer.pack_start(this.page_zoomer,true,true,0);
+            box_mainwin.pack_start(this.page_zoomer,false,false,0);
 
             var bookmarks_dirpath = app.bookmarks_parent_dir+app.bookmarks_directory;
             this.app.bookmarks_db = new DataBase(bookmarks_dirpath,app.bookmarks_filename);
