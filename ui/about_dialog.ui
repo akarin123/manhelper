@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Generated with glade 3.22.1 -->
+<!-- Generated with glade 3.22.2 -->
 <interface>
   <requires lib="gtk+" version="3.20"/>
   <template class="ManHelperAboutDialog" parent="GtkAboutDialog">
@@ -14,7 +14,7 @@
     <property name="license_type">gpl-3-0</property>
     <signal name="close" handler="gtk_widget_destroy" swapped="no"/>
     <signal name="response" handler="gtk_widget_destroy" swapped="no"/>
-    <child>
+    <child type="titlebar">
       <placeholder/>
     </child>
     <child internal-child="vbox">

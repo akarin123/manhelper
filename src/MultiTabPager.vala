@@ -155,6 +155,7 @@ namespace ManHelper
             win.view_current = page.get_data<WebKit.WebView>("view");
 
             win.page_zoomer.entry_zoom.changed();
+            win.view_current.reload();
            //win.view_current.load_uri("https://developer.gnome.org/icon-naming-spec/");
         }
     }
