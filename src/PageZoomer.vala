@@ -82,7 +82,7 @@ namespace ManHelper
         [GtkCallback]
         private void on_entry_zoom_changed(Gtk.Editable self)
         {
-            uint interval = 300;
+            uint interval = 100;
 
             Timeout.add(interval,()=>{update_view_zoom();return Source.REMOVE;});
         }
