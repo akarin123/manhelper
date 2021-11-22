@@ -20,9 +20,8 @@
 namespace ManHelper
 {   
     [GtkTemplate (ui = "/ui/bookmarks_dialog.ui")]
-    private class BookmarksDialog:Gtk.Dialog
+    private class BookmarksDialog: Gtk.Dialog
     {
-
         [GtkChild]
         private unowned Gtk.TreeView bookmarks_view;
 
@@ -96,14 +95,12 @@ namespace ManHelper
                     tree_model.get_value(tree_iter,0,out title_v);
 
                     SList<Value?> title_list = new SList<Value?>();
-                    //print("title: %s\n",title_v.get_string());
+
                     title_list.append(title_v);
 
                     //title_list.append("man");
                     var contents = query.get_table_contents();
                     var row_num = contents.get_row_from_values(title_list,{0});
-                    //print(@"row num: $(row_num)\n");
-                    //print(contents.get_value_at(1,row_num).get_string()+"\n");
 
                     var uri = contents.get_value_at(1,row_num).get_string();
                     this.win.view_current.load_uri(uri);
@@ -116,7 +113,7 @@ namespace ManHelper
                 }
             }
         }
-    
+
         [GtkCallback]
         private void on_btn_delete_clicked(Gtk.Button self)
         {
@@ -159,7 +156,6 @@ namespace ManHelper
             this.destroy();
         }    
 	}
-    
 
     private class SelectQuery:Object 
     {
@@ -235,11 +231,10 @@ namespace ManHelper
                     {
                         message(e.message);
                     }
-                    
-
                 }
             }
         }
+
         public void open() throws Error 
         {
                 //print("Opening Database connection...\n");
@@ -253,7 +248,7 @@ namespace ManHelper
                 this.run_query("CREATE TABLE IF NOT EXISTS bookmarks (title string PRIMARY KEY,uri string)");
 
         }
-        
+
         public int run_query (string query) throws Error requires (this.connection.is_opened())
         {
                 //print(@"Executing query: [$(query)]\n");

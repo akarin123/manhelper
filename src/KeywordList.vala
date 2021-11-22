@@ -21,7 +21,7 @@ namespace ManHelper
 {   
     /*Add search list for man pages*/
     [GtkTemplate (ui = "/ui/keyword_list.ui")]
-    private class KeywordList:Gtk.Window
+    private class KeywordList: Gtk.Window
     {
         public string keyword {get;set;default="";}
         public int find_num  {get;set;default=0;}

@@ -20,8 +20,8 @@
 namespace ManHelper
 {
     /* This is the application */
-    public class App:Gtk.Application
-    {    
+    public class App: Gtk.Application 
+    {
         public uint section_num_max {get;default=9;}
         public MainWin win;
 
@@ -33,15 +33,14 @@ namespace ManHelper
         internal DataBase bookmarks_db = null;
         private Gdk.Pixbuf app_icon;
         
-        protected override void startup()
+        protected override void startup() 
         {
             base.startup();
             DataBase.init_database_directory(this);
         }
 
         protected override void activate()
-        {   
-            //print("Before\n");                
+        {             
             var app_win = new MainWin(this);
 
             app_win.show_all();
@@ -64,7 +63,7 @@ namespace ManHelper
 
     /* This is the main window */
     [GtkTemplate (ui = "/ui/manhelper.ui")]
-    public class MainWin:Gtk.ApplicationWindow
+    public class MainWin: Gtk.ApplicationWindow
     {
         public App app;     
         public const string main_title = "Man Helper";
@@ -123,27 +122,6 @@ namespace ManHelper
             //this.theme_CSS = new ThemeCSS();
         }
 
-        /* guess the height of title bar*/
-        /*
-        private int guess_height_headerbar()
-        {
-            int height_header = 50;
-
-            var header = new Gtk.HeaderBar();
-            var window_temp = new Gtk.Window();
-            window_temp.width_request = this.default_width;
-            window_temp.height_request = this.default_height;
-            header.show_close_button = true;
-            header.title = MainWin.main_title;
-            window_temp.set_titlebar(header);
-            window_temp.show_all();
-            
-            height_header = header.get_allocated_height();
-            window_temp.destroy();
-            //print(@"$(height_header)\n");
-            return (height_header+1);
-        }
-        */
         [GtkCallback]
         internal bool on_search_list_outside_mouse_press(Gtk.Widget self,Gdk.EventButton evnt)
         {
@@ -503,7 +481,7 @@ namespace ManHelper
     }
 
     [GtkTemplate (ui = "/ui/about_dialog.ui")]
-    public class AboutDialog:Gtk.AboutDialog
+    public class AboutDialog: Gtk.AboutDialog
     {
         internal AboutDialog()
         {
@@ -524,7 +502,7 @@ namespace ManHelper
     }
 
     [GtkTemplate (ui = "/ui/search_dialog.ui")]
-    public class SearchDialog:Gtk.Dialog
+    public class SearchDialog: Gtk.Dialog
     {
         [GtkChild]
         private unowned Gtk.Entry entry_find;
@@ -614,11 +592,9 @@ namespace ManHelper
 
             key_evnt = evnt.key;
             keyval = key_evnt.keyval;
-            //print(@"search_prev: $(this.search_prev)\n");
+
             if (keyval == Gdk.Key.Return)
             {
-                //print("here!");
-                //print(@"search_prev: $(this.search_prev)");
                 if (this.search_prev)
                 {
                     this.btn_find_prev.clicked();

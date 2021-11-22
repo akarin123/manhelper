@@ -36,7 +36,7 @@ namespace ManHelper
         internal unowned Gtk.Image image_close;
 
         public int n_pages {get {return this.get_n_pages();}}
-        
+
         public MultitabPager(MainWin win)
         {
             WebKit.WebView view; 
