@@ -25,7 +25,6 @@
     <property name="resizable">False</property>
     <property name="type_hint">dialog</property>
     <signal name="close" handler="gtk_widget_destroy" swapped="no"/>
-    <signal name="response" handler="gtk_widget_destroy" swapped="no"/>
     <child type="titlebar">
       <placeholder/>
     </child>

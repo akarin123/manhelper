@@ -29,7 +29,7 @@ namespace ManHelper
         private Gtk.ListStore list_store;
         private Gtk.TreeIter list_iter;
 
-        public BookmarksDialog(MainWin win)
+        public BookmarksDialog (MainWin win)
         {
             this.win = win;
             list_store = new Gtk.ListStore(1,Type.STRING);
@@ -73,7 +73,7 @@ namespace ManHelper
         }
 
         [GtkCallback]
-        private void on_btn_load_clicked(Gtk.Button self)
+        private void on_btn_load_clicked (Gtk.Button self)
         {            
             var query = new SelectQuery();
             var bookmarks_db = this.win.app.bookmarks_db;
@@ -115,7 +115,7 @@ namespace ManHelper
         }
 
         [GtkCallback]
-        private void on_btn_delete_clicked(Gtk.Button self)
+        private void on_btn_delete_clicked (Gtk.Button self)
         {
             var query = new SelectQuery();
             var bookmarks_db = this.win.app.bookmarks_db;
@@ -151,7 +151,7 @@ namespace ManHelper
         }    
 
         [GtkCallback]
-        private void on_btn_close_clicked(Gtk.Button self)
+        private void on_btn_close_clicked (Gtk.Button self)
         {
             this.destroy();
         }    
@@ -204,7 +204,7 @@ namespace ManHelper
             }
         }
 
-        public static void init_database_directory(App app)
+        public static void init_database_directory (App app)
         {
             var home_dir = Environment.get_home_dir();
 

@@ -13,7 +13,6 @@
     <property name="logo_icon_name">image-missing</property>
     <property name="license_type">gpl-3-0</property>
     <signal name="close" handler="gtk_widget_destroy" swapped="no"/>
-    <signal name="response" handler="gtk_widget_destroy" swapped="no"/>
     <child type="titlebar">
       <placeholder/>
     </child>

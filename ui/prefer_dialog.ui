@@ -9,7 +9,7 @@
     <property name="title" translatable="yes">Preferences</property>
     <property name="resizable">False</property>
     <property name="type_hint">dialog</property>
-    <signal name="response" handler="gtk_widget_hide" swapped="no"/>
+    <signal name="close" handler="gtk_widget_destroy" swapped="no"/>
     <child type="titlebar">
       <placeholder/>
     </child>
@@ -218,9 +218,12 @@
               <object class="GtkCheckButton" id="btn_applyall">
                 <property name="label" translatable="yes">Apply to All</property>
                 <property name="visible">True</property>
+                <property name="sensitive">False</property>
                 <property name="can_focus">True</property>
                 <property name="receives_default">False</property>
+                <property name="tooltip_text" translatable="yes">Unavaible to change in current version</property>
                 <property name="halign">center</property>
+                <property name="active">True</property>
                 <property name="draw_indicator">True</property>
               </object>
               <packing>

@@ -41,7 +41,7 @@ namespace ManHelper
             italic_rgba.parse(black);
         }
 
-        public ThemeCSS.from_theme(ThemeDialog theme_dialog)
+        public ThemeCSS.from_theme (ThemeDialog theme_dialog)
         {
             this.theme_dialog = theme_dialog;
 
@@ -91,7 +91,13 @@ namespace ManHelper
             view.run_javascript.begin(java_script);
         }
 
-        public string to_string()
+        // placeholder, need further work here
+        public ThemeCSS copy()
+        {
+            return new ThemeCSS();
+        }
+
+        public string to_string ()
         {
             // need further work
             StringBuilder str_builder;

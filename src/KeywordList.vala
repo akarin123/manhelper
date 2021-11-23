@@ -46,7 +46,7 @@ namespace ManHelper
         private int menu_item_height = -1;
 
 
-        public KeywordList(MainWin win, string keyword)
+        public KeywordList (MainWin win, string keyword)
         {
             this.win = win;
             this.keyword = keyword.replace("\\","");  /* avoid syntax error for man -k <keyword> */
@@ -104,7 +104,7 @@ namespace ManHelper
             this.set_transient_for(win);
         }
 
-        internal void update_keyword_list_pos(MainWin win)
+        internal void update_keyword_list_pos (MainWin win)
         {
             Gtk.Allocation entry_allcation;
             Gdk.Window search_list_gdkwin;
@@ -150,7 +150,7 @@ namespace ManHelper
         }
 
         [GtkCallback]
-        private bool key_up_and_down(Gtk.Widget self,Gdk.Event evnt)
+        private bool key_up_and_down (Gtk.Widget self,Gdk.Event evnt)
         {
             Gdk.EventKey key_evnt;
             uint keyval;
@@ -206,7 +206,7 @@ namespace ManHelper
             return false;
         }
         [GtkCallback]
-        private bool escape_key_destroy(Gtk.Widget self,Gdk.Event evnt)
+        private bool escape_key_destroy (Gtk.Widget self,Gdk.Event evnt)
         {
             Gdk.EventKey key_evnt;
             uint keyval;
@@ -223,7 +223,7 @@ namespace ManHelper
         }
 
         [GtkCallback]
-        private bool mouse_leave_keyword_list(Gtk.Widget self,Gdk.Event evnt)
+        private bool mouse_leave_keyword_list (Gtk.Widget self,Gdk.Event evnt)
         {
             Gdk.EventCrossing evnt_cross;
             
@@ -238,7 +238,7 @@ namespace ManHelper
             return false;
         }
         
-        private void navigate_to_uri(Gtk.MenuItem self)
+        private void navigate_to_uri (Gtk.MenuItem self)
         {
             //Gtk.MenuItem selected_item;
             string man_entry;

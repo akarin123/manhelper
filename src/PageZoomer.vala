@@ -19,7 +19,7 @@
 
 namespace ManHelper
 {   
-    /*Add multitabs for scrolled window*/
+    /* This is the page zommer of the main window. */
     [GtkTemplate (ui = "/ui/page_zoomer.ui")]
     internal class PageZoomer: Gtk.Box
     {
@@ -87,7 +87,7 @@ namespace ManHelper
             Timeout.add(interval,()=>{update_view_zoom();return Source.REMOVE;});
         }
         
-        private void update_view_zoom()
+        internal void update_view_zoom()
         {
             double ratio;
             //uint32 default_font_size;

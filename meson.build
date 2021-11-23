@@ -25,11 +25,13 @@ dependencies = [
 ]
 
 sources = files('src/Application.vala',
+                'src/MainWin.vala',
+                'src/SearchDialog.vala',
                 'src/KeywordList.vala',
                 'src/Bookmarks.vala',
                 'src/MultiTabPager.vala',
                 'src/PageZoomer.vala',
-                'src/Preferences.vala',
+                'src/PreferDialog.vala',
                 'src/ThemeCSS.vala',)
 
 app = executable(meson.project_name(), 

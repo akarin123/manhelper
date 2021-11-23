@@ -19,7 +19,7 @@
 
 namespace ManHelper
 {   
-    /*Add multitabs for scrolled window*/
+    /* Add multitabs using scrolled window. */
     [GtkTemplate (ui = "/ui/multitab_pager.ui")]
     internal class MultitabPager: Gtk.Notebook
     {
@@ -154,7 +154,12 @@ namespace ManHelper
         {
             win.view_current = page.get_data<WebKit.WebView>("view");
 
-            win.page_zoomer.entry_zoom.changed();
+            if (win.prefer_dialog!=null)
+            {
+                win.prefer_dialog.update_page_prefer();
+                win.prefer_dialog.view = win.view_current;
+            }
+            win.page_zoomer.update_view_zoom();
             win.view_current.reload();
            //win.view_current.load_uri("https://developer.gnome.org/icon-naming-spec/");
         }

@@ -19,13 +19,17 @@
 
 namespace ManHelper
 {
-    /*Add preferences dialog*/
+    /* This is the preferences dialog. */
     [GtkTemplate (ui = "/ui/prefer_dialog.ui")]
     internal class PreferDialog: Gtk.Dialog
     {
         internal MainWin win = null;
         internal WebKit.WebView view = null;
         internal ThemeDialog theme_dialog = null;
+
+        internal Pango.FontDescription prefer_font_desc = null;
+        internal Gdk.RGBA prefer_backcolor = {};
+        internal ThemeCSS prefer_theme_CSS = null;
 
         [GtkChild]
         private unowned Gtk.FontButton btn_font;
@@ -37,10 +41,13 @@ namespace ManHelper
 
         [GtkChild]
         private unowned Gtk.CheckButton btn_startup;
+        
+        /*
         [GtkChild]
         private unowned Gtk.CheckButton btn_applyall;
+        */
 
-        public PreferDialog(MainWin win)
+        public PreferDialog (MainWin win)
         {
             this.win = win;
             this.view = win.view_current;
@@ -51,7 +58,7 @@ namespace ManHelper
         }   
         
         /* load current settings to the preferences dialog */
-        private void prefer_load_settings(WebKit.Settings settings)
+        private void prefer_load_settings (WebKit.Settings settings)
         {
             var default_font_size = settings.get_default_font_size();
             var default_font_family = settings.get_default_font_family();
@@ -101,7 +108,7 @@ namespace ManHelper
         }
 
         [GtkCallback]
-        private void on_btn_theme_clicked(Gtk.Button self)
+        private void on_btn_theme_clicked (Gtk.Button self)
         {
             if ((this.theme_dialog==null)||(!this.theme_dialog.get_realized()))
             {
@@ -116,7 +123,7 @@ namespace ManHelper
         }
 
         [GtkCallback]
-        private void on_prefer_btn_reset_clicked(Gtk.Button self)
+        private void on_prefer_btn_reset_clicked (Gtk.Button self)
         {
             Gdk.RGBA init_backcolor = {};
 
@@ -141,7 +148,7 @@ namespace ManHelper
 
 
         [GtkCallback]
-        private void on_prefer_btn_apply_clicked(Gtk.Button self)
+        internal void on_prefer_btn_apply_clicked (Gtk.Button self)
         {
             var settings = this.view.get_settings();
             var font_desc = this.btn_font.get_font_desc();
@@ -166,21 +173,23 @@ namespace ManHelper
                 save_startup_options(app);
             }
 
-            if (this.win.theme_CSS!=null)
+            if (this.prefer_theme_CSS != null)
             {
                 //print("here!");
-                this.win.theme_CSS.set_theme_CSS();
+                this.prefer_theme_CSS.set_theme_CSS();
             }
 
-            /* apply to all views */
-            if (btn_applyall.get_active())
-            {
-                // need further work
-                print("apply to all views!\n");
-            }
+            /* Store all prefer settings */
+            this.prefer_backcolor = backcolor;
+            this.prefer_font_desc = font_desc.copy();
         }
 
-        private void save_startup_options(App app)
+        internal void update_page_prefer () 
+        {
+                print("here!\n");
+        }
+
+        private void save_startup_options (App app)
         {
             var builder = new Json.Builder();
             
@@ -199,8 +208,8 @@ namespace ManHelper
             builder.set_member_name ("background");
             builder.add_string_value (backcolor.to_string());
 
-            var theme_CSS = this.win.theme_CSS;
-            if (theme_CSS==null)
+            var theme_CSS = this.prefer_theme_CSS;
+            if (theme_CSS == null)
             {
                 var black = "rgb(0,0,0)";
 
@@ -252,7 +261,7 @@ namespace ManHelper
             }
         }
         
-        internal void load_startup_options(App app)
+        internal void load_startup_options (App app)
         {
             var parser = new Json.Parser();
 
@@ -291,7 +300,7 @@ namespace ManHelper
                     var theme_bold_str = obj.get_member("theme-bold").get_string();
                     var theme_italic_str = obj.get_member("theme-italic").get_string();
                     //print("%p\n",this.win.theme_CSS);
-                    if (this.win.theme_CSS==null)
+                    if (this.prefer_theme_CSS==null)
                     {
                         //print("new themeCSS here!");
                         var startup_theme_CSS = new ThemeCSS();
@@ -302,7 +311,7 @@ namespace ManHelper
                         startup_theme_CSS.bold_rgba.parse(theme_bold_str);
                         startup_theme_CSS.italic_rgba.parse(theme_italic_str);
                         
-                        this.win.theme_CSS = startup_theme_CSS;
+                        this.prefer_theme_CSS = startup_theme_CSS;
                     }
                     //print("apply here!");
                     btn_apply.clicked();
@@ -345,11 +354,11 @@ namespace ManHelper
             theme_load_settings(view);
         }
 
-        private void theme_load_settings(WebKit.WebView view)
+        private void theme_load_settings (WebKit.WebView view)
         {
-            var theme_CSS = this.prefer_dialog.win.theme_CSS;
+            var theme_CSS = this.prefer_dialog.prefer_theme_CSS;
 
-            if (theme_CSS!=null)
+            if (theme_CSS != null)
             {
                 //print("load theme\n");
                 var title_rgba = theme_CSS.title_rgba;
@@ -367,12 +376,12 @@ namespace ManHelper
         }
         
         [GtkCallback]
-        private void on_theme_btn_ok_clicked(Gtk.Button self)
+        private void on_theme_btn_ok_clicked (Gtk.Button self)
         {
             var theme_CSS = new ThemeCSS.from_theme(this);
             //print(theme_css.to_string());
 
-            this.prefer_dialog.win.theme_CSS = theme_CSS; 
+            this.prefer_dialog.prefer_theme_CSS = theme_CSS; 
             this.hide();
         }
     }
