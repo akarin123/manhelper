@@ -37,8 +37,8 @@ namespace ManHelper
         internal PageZoomer page_zoomer = null;
         internal PreferDialog prefer_dialog = null;
         internal Pango.FontDescription prefer_font_desc = null;
-        internal ThemeCSS prefer_theme_CSS;
-        internal Gdk.RGBA prfer_back_color = {};
+        internal ThemeCSS prefer_theme_CSS = null;
+        internal Gdk.RGBA prefer_backcolor = {};
 
         [GtkChild]
         private unowned Gtk.Button btn_man;
@@ -77,8 +77,10 @@ namespace ManHelper
 
             var prefer_dialog = new PreferDialog(this); /* init font size and family */
             prefer_dialog.load_startup_options(app);
+            
+            this.prefer_font_desc = prefer_dialog.btn_font.get_font_desc();
+            this.prefer_backcolor = prefer_dialog.btn_backcolor.get_rgba();
             prefer_dialog.hide();
-
             //this.theme_CSS = new ThemeCSS();
         }
 
@@ -130,7 +132,7 @@ namespace ManHelper
                         entry_found = true;  
                         break;            
                     }
-                } 
+                }
             }
             else if (entry_data.length > 1)
             {
@@ -160,6 +162,16 @@ namespace ManHelper
                     this.search_list.destroy();
                 }
             }
+
+            if ((this.prefer_dialog == null) || (!this.prefer_dialog.get_realized()))
+            {
+                this.prefer_dialog = new PreferDialog(this);
+            }
+
+            this.prefer_dialog.view = this.view_current;
+            this.prefer_dialog.hide();
+            /* Add a 10 ms delay */
+            Timeout.add(10,()=>{this.prefer_dialog.update_page_prefer();return Source.REMOVE;});
         }
 
         [GtkCallback]
@@ -317,7 +329,7 @@ namespace ManHelper
         [GtkCallback]
         private void on_prefer_clicked (Gtk.MenuItem self)
         {
-            if ((this.prefer_dialog==null)||(!this.prefer_dialog.get_realized()))
+            if ((this.prefer_dialog == null) || (!this.prefer_dialog.get_realized()))
             {
                 this.prefer_dialog = new PreferDialog(this);
                 this.prefer_dialog.show_all();

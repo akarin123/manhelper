@@ -52,28 +52,34 @@ namespace ManHelper
             italic_rgba = this.theme_dialog.btn_italic.get_rgba();
         }
 
-        public void set_theme_CSS()
+        public void set_theme_CSS(WebKit.WebView view)
         {
             // need further work using Javascript
             //print("java script here!");
-            WebKit.WebView view = null;
-            if (this.theme_dialog!=null)
+            /*WebKit.WebView view = null;
+            if (this.theme_dialog != null)
             {
                 view = this.theme_dialog.view;
             }
-            else if (this.prefer_dialog!=null)
+            else if (this.prefer_dialog != null)
             {
                 //print("prefer!\n");
                 view = this.prefer_dialog.view;
             }
             else
             {
+                print ("return here\n");
+                return;
+            }*/
+
+            if (view == null)
+            {
                 return;
             }
 
             var css_str = this.to_string();
             var java_script = @"var style = document.createElement('style'); style.innerHTML = '$(css_str)';document.head.appendChild(style)"; 
-            
+            //print ("CSS: %s\n",css_str);
             /*
             try 
             {
@@ -88,14 +94,17 @@ namespace ManHelper
             }*/
             
             // need further work here
-            view.run_javascript.begin(java_script);
+            //view.run_javascript.begin(java_script);
+
+            /* Add a 1 ms delay to make javascript work */
+            Timeout.add(1,()=>{view.run_javascript.begin(java_script);return Source.REMOVE;});
         }
 
         // placeholder, need further work here
-        public ThemeCSS copy()
+        /*public ThemeCSS copy()
         {
             return new ThemeCSS();
-        }
+        }*/
 
         public string to_string ()
         {

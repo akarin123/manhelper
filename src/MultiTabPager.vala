@@ -118,6 +118,11 @@ namespace ManHelper
 
                 var title_page = self.get_title().replace("Man page of ","");
                 page_label.set_text(title_page);
+
+                if ((win.prefer_dialog == null) || (!win.prefer_dialog.get_realized()))
+                {
+                    this.win.prefer_dialog = new PreferDialog(this.win);
+                }
             }
         }
 
@@ -153,15 +158,20 @@ namespace ManHelper
         private void on_page_switched(Gtk.Widget page,uint page_num)
         {
             win.view_current = page.get_data<WebKit.WebView>("view");
-
-            if (win.prefer_dialog!=null)
-            {
-                win.prefer_dialog.update_page_prefer();
-                win.prefer_dialog.view = win.view_current;
-            }
+            
             win.page_zoomer.update_view_zoom();
-            win.view_current.reload();
-           //win.view_current.load_uri("https://developer.gnome.org/icon-naming-spec/");
+
+            if ((win.prefer_dialog == null) || (!win.prefer_dialog.get_realized()))
+            {
+                this.win.prefer_dialog = new PreferDialog(this.win);
+            }
+
+            win.prefer_dialog.view = win.view_current;
+            win.prefer_dialog.hide();
+
+            //Timeout.add(100,()=>{win.prefer_dialog.update_page_prefer();return Source.REMOVE;});            
+            //win.view_current.reload();
+            win.prefer_dialog.update_page_prefer();
         }
     }
 

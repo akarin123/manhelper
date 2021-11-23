@@ -27,21 +27,17 @@ namespace ManHelper
         internal WebKit.WebView view = null;
         internal ThemeDialog theme_dialog = null;
 
-        internal Pango.FontDescription prefer_font_desc = null;
-        internal Gdk.RGBA prefer_backcolor = {};
-        internal ThemeCSS prefer_theme_CSS = null;
+        [GtkChild]
+        internal unowned Gtk.FontButton btn_font;
+        [GtkChild]
+        internal unowned Gtk.ColorButton btn_backcolor;
 
         [GtkChild]
-        private unowned Gtk.FontButton btn_font;
-        [GtkChild]
-        private unowned Gtk.ColorButton btn_backcolor;
+        internal unowned Gtk.Button btn_apply;
 
         [GtkChild]
-        private unowned Gtk.Button btn_apply;
+        internal unowned Gtk.CheckButton btn_startup;
 
-        [GtkChild]
-        private unowned Gtk.CheckButton btn_startup;
-        
         /*
         [GtkChild]
         private unowned Gtk.CheckButton btn_applyall;
@@ -146,12 +142,25 @@ namespace ManHelper
             btn_apply.clicked();
         }
 
-
         [GtkCallback]
         internal void on_prefer_btn_apply_clicked (Gtk.Button self)
         {
-            var settings = this.view.get_settings();
             var font_desc = this.btn_font.get_font_desc();
+            var backcolor = this.btn_backcolor.get_rgba();
+
+            /* store all prefer settings */
+            this.win.prefer_backcolor = backcolor;
+            this.win.prefer_font_desc = font_desc.copy();
+
+            update_page_prefer();
+        }
+
+        internal void update_page_prefer () 
+        {
+            var settings = this.view.get_settings();
+            var font_desc = this.win.prefer_font_desc;
+            var backcolor = this.win.prefer_backcolor;
+
             var font_size = font_desc.get_size();
             var font_family = font_desc.get_family();
 
@@ -159,11 +168,11 @@ namespace ManHelper
             settings.set_default_font_family(font_family);
 
             /* update page zoomer */
+            //print("pango font size:%d\n",font_size);
             double font_size_scaled = font_size/Pango.SCALE*1.0; /* ensure it is of double type */
             this.win.page_zoomer.zoom_ratio = (int)Math.round(font_size_scaled/this.win.init_font_size*100);
             this.win.page_zoomer.update_zoom_entry();
 
-            var backcolor = this.btn_backcolor.get_rgba();
             this.view.set_background_color(backcolor);
 
             /* check whether change startup options */
@@ -173,20 +182,11 @@ namespace ManHelper
                 save_startup_options(app);
             }
 
-            if (this.prefer_theme_CSS != null)
+            if (this.win.prefer_theme_CSS != null)
             {
-                //print("here!");
-                this.prefer_theme_CSS.set_theme_CSS();
+                this.win.prefer_theme_CSS.set_theme_CSS(this.view);
             }
 
-            /* Store all prefer settings */
-            this.prefer_backcolor = backcolor;
-            this.prefer_font_desc = font_desc.copy();
-        }
-
-        internal void update_page_prefer () 
-        {
-                print("here!\n");
         }
 
         private void save_startup_options (App app)
@@ -208,7 +208,7 @@ namespace ManHelper
             builder.set_member_name ("background");
             builder.add_string_value (backcolor.to_string());
 
-            var theme_CSS = this.prefer_theme_CSS;
+            var theme_CSS = this.win.prefer_theme_CSS;
             if (theme_CSS == null)
             {
                 var black = "rgb(0,0,0)";
@@ -300,7 +300,7 @@ namespace ManHelper
                     var theme_bold_str = obj.get_member("theme-bold").get_string();
                     var theme_italic_str = obj.get_member("theme-italic").get_string();
                     //print("%p\n",this.win.theme_CSS);
-                    if (this.prefer_theme_CSS==null)
+                    if (this.win.prefer_theme_CSS == null)
                     {
                         //print("new themeCSS here!");
                         var startup_theme_CSS = new ThemeCSS();
@@ -311,7 +311,7 @@ namespace ManHelper
                         startup_theme_CSS.bold_rgba.parse(theme_bold_str);
                         startup_theme_CSS.italic_rgba.parse(theme_italic_str);
                         
-                        this.prefer_theme_CSS = startup_theme_CSS;
+                        this.win.prefer_theme_CSS = startup_theme_CSS;
                     }
                     //print("apply here!");
                     btn_apply.clicked();
@@ -356,7 +356,7 @@ namespace ManHelper
 
         private void theme_load_settings (WebKit.WebView view)
         {
-            var theme_CSS = this.prefer_dialog.prefer_theme_CSS;
+            var theme_CSS = this.prefer_dialog.win.prefer_theme_CSS;
 
             if (theme_CSS != null)
             {
@@ -381,7 +381,7 @@ namespace ManHelper
             var theme_CSS = new ThemeCSS.from_theme(this);
             //print(theme_css.to_string());
 
-            this.prefer_dialog.prefer_theme_CSS = theme_CSS; 
+            this.prefer_dialog.win.prefer_theme_CSS = theme_CSS; 
             this.hide();
         }
     }

@@ -34,6 +34,7 @@ namespace ManHelper
         [GtkChild]
         private unowned Gtk.Button btn_find_next;
 
+        private MainWin win;
         private WebKit.WebView main_view;
         private WebKit.FindOptions _option = WebKit.FindOptions.NONE;
 
@@ -42,6 +43,7 @@ namespace ManHelper
         internal SearchDialog(MainWin win)
         {          
             //parent_win = win;
+            this.win = win;
             main_view = win.view_current;
         }
         
@@ -63,6 +65,7 @@ namespace ManHelper
             string find_text;
             find_text = entry_find.get_text();
 
+            main_view = this.win.view_current; /* update currnt view */
             find_control = main_view.get_find_controller();
 
             //print(find_text);
@@ -82,6 +85,7 @@ namespace ManHelper
             string find_text;
             find_text = entry_find.get_text();
 
+            main_view = this.win.view_current; /* update currnt view */
             find_control = main_view.get_find_controller();
             //print(find_text);
 
