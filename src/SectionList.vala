@@ -22,8 +22,45 @@ namespace ManHelper
     [GtkTemplate (ui = "/ui/section_list.ui")]
     internal class SectionList: Gtk.Box
     {
-        internal SectionList()
-        { 
-        }    
+        MainWin win;
+
+        [GtkChild]
+        private unowned Gtk.ComboBox section_combo;
+
+        internal SectionList(MainWin win)
+        {
+            Gtk.TreeIter section_list_iter;
+            this.win = win;
+
+            var section_list_store = new Gtk.ListStore(2, typeof(string), typeof(string));
+            section_list_store.append(out section_list_iter);
+            section_list_store.set(section_list_iter,0," ",1,"All Sections",-1);
+            section_list_store.append(out section_list_iter);
+            section_list_store.set(section_list_iter,0,"1:",1,"User Commands",-1);
+            section_list_store.append(out section_list_iter);
+            section_list_store.set(section_list_iter,0,"2:",1,"System Calls",-1);
+            section_list_store.append(out section_list_iter);
+            section_list_store.set(section_list_iter,0,"3:",1,"Library Functions",-1);
+            section_list_store.append(out section_list_iter);
+            section_list_store.set(section_list_iter,0,"4:",1,"Special Files",-1);
+            section_list_store.append(out section_list_iter);
+            section_list_store.set(section_list_iter,0,"5:",1,"File Formats",-1);
+            section_list_store.append(out section_list_iter);
+            section_list_store.set(section_list_iter,0,"6:",1,"Games",-1);
+            section_list_store.append(out section_list_iter);
+            section_list_store.set(section_list_iter,0,"7:",1,"Miscellany",-1);
+            section_list_store.append(out section_list_iter);
+            section_list_store.set(section_list_iter,0,"8:",1,"Administration",-1);
+            section_combo.set_model(section_list_store);
+
+            var cellrender1 = new Gtk.CellRendererText();
+            section_combo.pack_start(cellrender1, true);
+            section_combo.add_attribute(cellrender1, "text", 0);
+            var cellrender2 = new Gtk.CellRendererText();
+            section_combo.pack_start(cellrender2, true);
+            section_combo.add_attribute(cellrender2, "text", 1);
+            
+            section_combo.set_active(0);
+        }
     }
 }

@@ -32,6 +32,7 @@ namespace ManHelper
         internal Gtk.FileChooserDialog file_chooser = null;
         internal BookmarksDialog bookmarks_dialog = null;
         internal SearchDialog search_dialog = null;
+        internal SectionList section_list = null;
         internal MultitabPager pager = null;
         internal WebKit.WebView view_current = null; 
         internal PageZoomer page_zoomer = null;
@@ -48,6 +49,11 @@ namespace ManHelper
         //internal Gtk.ScrolledWindow scrolled;
         [GtkChild]
         private unowned Gtk.Box box_mainwin;
+
+        [GtkChild]
+        private unowned Gtk.Box box_section_list;
+        [GtkChild]
+        private unowned Gtk.CheckButton btn_enable_search;
 
         internal string init_font_family = null;
         internal uint32 init_font_size = 0;
@@ -68,9 +74,13 @@ namespace ManHelper
             //print(settings.enable_javascript.to_string()+"\n");
             //this.start_font_size = settings.get_default_font_size();
 
-            /* pack the page_zoomer after Webkit view */
+            /* Pack the page_zoomer after Webkit view */
             this.page_zoomer = new PageZoomer(this);
             box_mainwin.pack_start(this.page_zoomer,false,false,0);
+
+            /* Pack section list */
+            this.section_list = new SectionList(this);
+            box_section_list.pack_start(this.section_list,true,false,0);
 
             var bookmarks_dirpath = app.bookmarks_parent_dir+app.bookmarks_directory;
             this.app.bookmarks_db = new DataBase(bookmarks_dirpath,app.bookmarks_filename);
@@ -104,7 +114,7 @@ namespace ManHelper
             man_uri[] man_uri_test = new man_uri[this.app.section_num_max];
             bool entry_found = false;
             string[] entry_data;
-            if ((entry_text=="")||(entry_text==this.last_entry_text))
+            if ((entry_text == "") || (entry_text == this.last_entry_text))
             {
                 return;
             }
@@ -186,21 +196,21 @@ namespace ManHelper
         {
             string text = self.get_text();
             const int long_cmd = 5;
-            //List<Gtk.MenuItem> menu_items; 
+            bool enable_search = btn_enable_search.get_active();
             KeywordList old_list;
 
-            if (text.length>long_cmd)
+            if (enable_search && (text.length > long_cmd))
             {
                 old_list = this.search_list;
 
-                if ((old_list!=null)&&(old_list.get_realized()))
+                if ((old_list != null) && (old_list.get_realized()))
                 {
                     Timeout.add(150,()=>{old_list.destroy();return Source.REMOVE;}); // add a 150 ms delay
                 }
 
                 this.search_list = new KeywordList(this,text);
 
-                if (this.search_list.find_num>0)
+                if (this.search_list.find_num > 0)
                 {
                     this.search_list.show_all();
                     this.search_list.update_keyword_list_pos(this);
@@ -209,7 +219,7 @@ namespace ManHelper
             }
             else
             {
-                if ((this.search_list!=null)&&(this.search_list.get_realized()))
+                if ((this.search_list != null) && (this.search_list.get_realized()))
                 {
                     this.search_list.destroy();
                 }
@@ -243,11 +253,11 @@ namespace ManHelper
         {
             var focus = this.get_focus();
 
-            if (focus==this.view_current)
+            if (focus == this.view_current)
             {
                 this.view_current.execute_editing_command("Copy");
             }
-            else if (focus==this.entry_search)
+            else if (focus == this.entry_search)
             {
                 this.entry_search.copy_clipboard();
             }
