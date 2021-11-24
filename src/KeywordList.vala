@@ -19,7 +19,7 @@
 
 namespace ManHelper
 {   
-    /*Add search list for man pages*/
+    /* Add search list of man pages */
     [GtkTemplate (ui = "/ui/keyword_list.ui")]
     private class KeywordList: Gtk.Window
     {
@@ -50,17 +50,27 @@ namespace ManHelper
         {
             this.win = win;
             this.keyword = keyword.replace("\\","");  /* avoid syntax error for man -k <keyword> */
+            
+            /* Find section number, 0 is "All Sections" */
+            var section_num = this.win.section_list.section_combo.get_active();
 
             try 
             {
-                Process.spawn_command_line_sync ("man -k "+"\""+this.keyword+"\"",out man_stdout,out man_stderr,out man_status);
+                if (section_num >= 1)
+                {
+                    Process.spawn_command_line_sync (@"man -k -s $(section_num) "+"\""+this.keyword+"\"",out man_stdout,out man_stderr,out man_status);
+                } 
+                else
+                {
+                    Process.spawn_command_line_sync ("man -k "+"\""+this.keyword+"\"",out man_stdout,out man_stderr,out man_status);
+                }
             } 
             catch (SpawnError e) 
             {
                 message(e.message);
             }
             man_entries = man_stdout.split("\n");
-            
+
             if (man_entries.length>0)
             {
                 find_num = man_entries.length-1; /* string.split() will add an extra "\n" string at the end */
@@ -74,7 +84,7 @@ namespace ManHelper
                 this.keywordmenu.append(menu_item);
                 
             }
-            
+
             if (menu_item_height < 0)
             {
                 var win_tmp = new Gtk.Window();
