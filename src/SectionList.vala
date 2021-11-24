@@ -25,7 +25,7 @@ namespace ManHelper
         MainWin win;
 
         [GtkChild]
-        private unowned Gtk.ComboBox section_combo;
+        internal unowned Gtk.ComboBox section_combo;
 
         internal SectionList(MainWin win)
         {

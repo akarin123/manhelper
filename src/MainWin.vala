@@ -118,6 +118,14 @@ namespace ManHelper
             {
                 return;
             }
+            
+            /* Find section number, 0 is "All Sections" */
+            var section_num = this.section_list.section_combo.get_active();
+            if (section_num >= 1)
+            {
+                //print(@"add section $(section_num)!\n");
+                entry_text = entry_text + @".$(section_num)";
+            }
 
             this.last_entry_text = entry_text;
             entry_data = entry_text.split(".");
