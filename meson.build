@@ -32,6 +32,7 @@ sources = files('src/Application.vala',
                 'src/MultiTabPager.vala',
                 'src/PageZoomer.vala',
                 'src/PreferDialog.vala',
+                'src/SectionList.vala',
                 'src/ThemeCSS.vala',)
 
 app = executable(meson.project_name(), 
