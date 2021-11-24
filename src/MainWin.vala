@@ -114,11 +114,11 @@ namespace ManHelper
             man_uri[] man_uri_test = new man_uri[this.app.section_num_max];
             bool entry_found = false;
             string[] entry_data;
-            if ((entry_text == "") || (entry_text == this.last_entry_text))
+            if ((entry_text == ""))
             {
                 return;
             }
-            
+
             /* Find section number, 0 is "All Sections" */
             var section_num = this.section_list.section_combo.get_active();
             if (section_num >= 1)
@@ -167,7 +167,7 @@ namespace ManHelper
 
             if (!entry_found)
             {
-                // should limit the time for showing this tooltip 
+                // FIXME: should limit the time for showing this tooltip 
                 this.set_tooltip_text("No man page for "+entry_text);
                 this.trigger_tooltip_query();
             }
@@ -188,8 +188,8 @@ namespace ManHelper
 
             this.prefer_dialog.view = this.view_current;
             this.prefer_dialog.hide();
-            /* Add a 10 ms delay */
-            Timeout.add(10,()=>{this.prefer_dialog.update_page_prefer();return Source.REMOVE;});
+            /* Add a 50 ms delay */
+            Timeout.add(50,()=>{this.prefer_dialog.update_page_prefer();return Source.REMOVE;});
         }
 
         [GtkCallback]
@@ -274,7 +274,6 @@ namespace ManHelper
         [GtkCallback]
         private async void on_save_as_clicked (Gtk.MenuItem self)
         {
-            //print("need to implement\n");
             File file = null;;
             int save_resp;
             string filepath;
@@ -325,8 +324,6 @@ namespace ManHelper
                     name = name+file_extension; // add .html file extension
 
                 file = File.new_build_filename(parent_path,name);
-
-                //print(file.get_parse_name()+"\n");
 
                 try
                 {
@@ -453,7 +450,6 @@ namespace ManHelper
         [GtkCallback]
         void on_btn_bookmarks_clicked (Gtk.Button self)
         {
-            //BookmarksDialog bookmarks_dialog;
             if ((this.bookmarks_dialog == null)||(!this.bookmarks_dialog.get_realized()))
             {
                 this.bookmarks_dialog = new BookmarksDialog(this);

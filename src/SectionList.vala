@@ -19,6 +19,7 @@
 
 namespace ManHelper
 {
+    /* List sections of the man pages*/
     [GtkTemplate (ui = "/ui/section_list.ui")]
     internal class SectionList: Gtk.Box
     {

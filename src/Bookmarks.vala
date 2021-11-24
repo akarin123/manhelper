@@ -18,7 +18,8 @@
 */
 
 namespace ManHelper
-{   
+{
+    /* This manages bookmarks of the program. */
     [GtkTemplate (ui = "/ui/bookmarks_dialog.ui")]
     private class BookmarksDialog: Gtk.Dialog
     {

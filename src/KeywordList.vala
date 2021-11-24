@@ -49,7 +49,7 @@ namespace ManHelper
         public KeywordList (MainWin win, string keyword)
         {
             this.win = win;
-            this.keyword = keyword.replace("\\","");  /* avoid syntax error for man -k <keyword> */
+            this.keyword = keyword.replace("\\","");  /* Avoid syntax error for man -k <keyword> */
             
             /* Find section number, 0 is "All Sections" */
             var section_num = this.win.section_list.section_combo.get_active();
@@ -144,7 +144,6 @@ namespace ManHelper
             {
                 this.width_request=width_new;
                 this.resize(this.width_request,this.height_request);
-                
                 //print(@"width now:$(width_new),$(this.width_request), time:"+Time.local(time_t()).to_string()+"\n");
             }
             
@@ -263,7 +262,21 @@ namespace ManHelper
             sec_index=man_data[1].replace("(","").replace(")","");
             //print(man_data[0]+"."+sec_index+"\n");
             item_uri="http://localhost/cgi-bin/man/man2html?"+sec_index+"+"+man_data[0].strip();
-            this.win.view_current.load_uri(item_uri);  
+            this.win.view_current.load_uri(item_uri);
+
+            /* Setup the CSS theme */
+            if ((this.win.prefer_dialog == null) || (!this.win.prefer_dialog.get_realized()))
+            {
+                this.win.prefer_dialog = new PreferDialog(this.win);
+            }
+
+            this.win.prefer_dialog.view = this.win.view_current;
+            this.win.prefer_dialog.hide();
+            /* Add a 50 ms delay */
+            Timeout.add(50,()=>{this.win.prefer_dialog.update_page_prefer();return Source.REMOVE;});
+
+            this.win.last_entry_text = this.keyword; /* Update last entry text */
+
             this.destroy();
         }
         /*
