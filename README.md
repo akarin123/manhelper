@@ -40,5 +40,5 @@ To install, use `ninja install`, then execute with `com.github.manhelper`
 - [x] multi-tab views
 - [x] zoom in/out
 - [x] preferences (font family, theme color, etc)
-- [ ] color marking
+- [x] sections
 - [ ] translation
