@@ -385,4 +385,12 @@ namespace ManHelper
             this.hide();
         }
     }
+
+    public struct Preferences
+    {
+        int font_size;
+        string font_family;
+        Gdk.RGBA back_color;
+        int search_chars_no;
+    }
 }

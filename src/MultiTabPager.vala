@@ -174,5 +174,4 @@ namespace ManHelper
             win.prefer_dialog.update_page_prefer();
         }
     }
-
 }

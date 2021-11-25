@@ -19,7 +19,7 @@
 
 namespace ManHelper
 {   
-    /* Add search list of man pages */
+    /* Search list of man pages from entry text*/
     [GtkTemplate (ui = "/ui/keyword_list.ui")]
     private class KeywordList: Gtk.Window
     {
