@@ -260,10 +260,12 @@
                     <property name="max_length">1</property>
                     <property name="width_chars">2</property>
                     <property name="text" translatable="yes">6</property>
+                    <property name="xalign">1</property>
                   </object>
                   <packing>
                     <property name="expand">False</property>
                     <property name="fill">True</property>
+                    <property name="padding">2</property>
                     <property name="position">1</property>
                   </packing>
                 </child>

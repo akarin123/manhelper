@@ -20,7 +20,7 @@
 namespace ManHelper
 {
     /* CSS of the text */
-    internal class ThemeCSS: Object
+    internal class ThemeCSS
     {
         public Gdk.RGBA title_rgba = {};
         public Gdk.RGBA heading_rgba = {};

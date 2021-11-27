@@ -21,7 +21,7 @@ namespace ManHelper
 {
     /* This is the preferences dialog. */
     [GtkTemplate (ui = "/ui/prefer_dialog.ui")]
-    internal class PreferDialog: Gtk.Dialog
+    public class PreferDialog: Gtk.Dialog
     {
         internal MainWin win = null;
         internal WebKit.WebView view = null;
@@ -143,7 +143,7 @@ namespace ManHelper
         }
 
         [GtkCallback]
-        internal void on_prefer_btn_apply_clicked (Gtk.Button self)
+        public void on_prefer_btn_apply_clicked (Gtk.Button self)
         {
             var font_desc = this.btn_font.get_font_desc();
             var backcolor = this.btn_backcolor.get_rgba();
@@ -155,7 +155,7 @@ namespace ManHelper
             update_page_prefer();
         }
 
-        internal void update_page_prefer () 
+        public void update_page_prefer () 
         {
             var settings = this.view.get_settings();
             var font_desc = this.win.prefer_font_desc;
@@ -386,11 +386,28 @@ namespace ManHelper
         }
     }
 
-    public struct Preferences
+    public class Preferences
     {
+        MainWin win;
+        //WebKit.WebView view;
         int font_size;
         string font_family;
         Gdk.RGBA back_color;
         int search_chars_no;
+
+        public Preferences (MainWin win) 
+        {
+            this.win = win;
+            var view = win.view_current;
+            var settings = view.get_settings();
+
+            //this.font_size = 16;
+            //this.font_family = "place_holder";
+            //this.back_color = {1.0,1.0,1.0,1.0};
+            //this.search_chars_no = 6;
+            var default_font_size = settings.get_default_font_size();
+            var default_font_family = settings.get_default_font_family();
+            var default_backcolor = view.get_background_color();
+        }
     }
 }
