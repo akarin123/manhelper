@@ -59,7 +59,7 @@ namespace ManHelper
             var default_font_size = settings.get_default_font_size();
             var default_font_family = settings.get_default_font_family();
             var default_backcolor = this.view.get_background_color();
-
+            //print("fake: "+default_font_family+"\n");
             if (this.win.init_font_size==0)
             {
                 this.win.init_font_size = default_font_size;
@@ -84,7 +84,7 @@ namespace ManHelper
                     {
                         this.win.init_font_family = default_font_family;
                     }
-                    //print(default_font_family+"\n");
+                    //print("real: "+default_font_family+"\n");
                 }
             } 
             catch (SpawnError e) 
@@ -401,13 +401,37 @@ namespace ManHelper
             var view = win.view_current;
             var settings = view.get_settings();
 
-            //this.font_size = 16;
-            //this.font_family = "place_holder";
-            //this.back_color = {1.0,1.0,1.0,1.0};
-            //this.search_chars_no = 6;
             var default_font_size = settings.get_default_font_size();
-            var default_font_family = settings.get_default_font_family();
+            var default_font_family = settings.get_default_font_family(); /* just placeholder */
             var default_backcolor = view.get_background_color();
+
+            try 
+            {
+                string fc_stdout;
+                string fc_stderr;
+                int fc_status;
+
+                string fc_cmd = @"fc-match \"$(default_font_family)\"";
+                Process.spawn_command_line_sync (fc_cmd, out fc_stdout, out fc_stderr, out fc_status);
+
+                var fc_output = fc_stdout.split("\"");
+
+                if (fc_output.length > 1)
+                {
+                    default_font_family = fc_output[1]; /* real default font faimly */
+                    this.font_family = default_font_family;
+                    //print(default_font_family+"\n");
+                }
+            } 
+            catch (SpawnError e) 
+            {
+                message(e.message);
+            }
+
+            var font_desc = new Pango.FontDescription();
+
+            font_desc.set_family(default_font_family);
+            font_desc.set_size((int)default_font_size*Pango.SCALE);
         }
     }
 }
