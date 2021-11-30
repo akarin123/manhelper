@@ -38,10 +38,10 @@ namespace ManHelper
         [GtkChild]
         internal unowned Gtk.CheckButton btn_startup;
 
-        /*
+
         [GtkChild]
-        private unowned Gtk.CheckButton btn_applyall;
-        */
+        private unowned Gtk.Entry entry_search_char_no;
+
 
         public PreferDialog (MainWin win)
         {
@@ -52,7 +52,7 @@ namespace ManHelper
             prefer_load_settings(settings);
             //this.default_font_size = settings.get_default_font_size();
         }   
-        
+
         /* load current settings to the preferences dialog */
         private void prefer_load_settings (WebKit.Settings settings)
         {
@@ -103,6 +103,18 @@ namespace ManHelper
             btn_backcolor.set_rgba(default_backcolor);
         }
 
+        public void load_preferences (Preferences prefer)
+        {
+            var font_desc = new Pango.FontDescription();
+
+            font_desc.set_family(prefer.font_family);
+            font_desc.set_size((int)prefer.font_size*Pango.SCALE);
+
+            btn_font.set_font_desc(font_desc);
+            
+            btn_backcolor.set_rgba(prefer.back_color);
+        }
+
         [GtkCallback]
         private void on_btn_theme_clicked (Gtk.Button self)
         {
@@ -139,6 +151,7 @@ namespace ManHelper
 
             init_backcolor.parse("rgb(255,255,255)"); /* back to white */
             btn_backcolor.set_rgba(init_backcolor);
+            entry_search_char_no.set_text("6");
             btn_apply.clicked();
         }
 
@@ -388,12 +401,12 @@ namespace ManHelper
 
     public class Preferences
     {
-        MainWin win;
+        private MainWin win;
         //WebKit.WebView view;
-        int font_size;
-        string font_family;
-        Gdk.RGBA back_color;
-        int search_chars_no;
+        public int font_size;
+        public string font_family;
+        public Gdk.RGBA back_color;
+        public int search_chars_no {set;get;default=6;}
 
         public Preferences (MainWin win) 
         {
