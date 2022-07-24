@@ -26,19 +26,16 @@ namespace ManHelper
         internal MainWin win = null;
         internal WebKit.WebView view = null;
         internal ThemeDialog theme_dialog = null;
+        internal Preferences prefer = null;
 
         [GtkChild]
         internal unowned Gtk.FontButton btn_font;
         [GtkChild]
         internal unowned Gtk.ColorButton btn_backcolor;
-
         [GtkChild]
         internal unowned Gtk.Button btn_apply;
-
         [GtkChild]
         internal unowned Gtk.CheckButton btn_startup;
-
-
         [GtkChild]
         private unowned Gtk.Entry entry_search_char_no;
 
@@ -48,8 +45,10 @@ namespace ManHelper
             this.win = win;
             this.view = win.view_current;
             
+            this.prefer = new Preferences(win);
             var settings = view.get_settings();
-            prefer_load_settings(settings);
+            //prefer_load_settings(settings);
+            init_preferences (this.prefer);
             //this.default_font_size = settings.get_default_font_size();
         }   
 
@@ -103,16 +102,16 @@ namespace ManHelper
             btn_backcolor.set_rgba(default_backcolor);
         }
 
-        public void load_preferences (Preferences prefer)
+        public void init_preferences (Preferences prefer)
         {
-            var font_desc = new Pango.FontDescription();
-
+            /*var font_desc = new Pango.FontDescription();
+            print(@"$(prefer.font_size)"+"\n");
             font_desc.set_family(prefer.font_family);
-            font_desc.set_size((int)prefer.font_size*Pango.SCALE);
+            font_desc.set_size((int)prefer.font_size*Pango.SCALE);*/
 
-            btn_font.set_font_desc(font_desc);
-            
+            btn_font.set_font_desc(prefer.font_desc);
             btn_backcolor.set_rgba(prefer.back_color);
+            entry_search_char_no.set_text(prefer.search_chars_no.to_string());
         }
 
         [GtkCallback]
@@ -160,23 +159,28 @@ namespace ManHelper
         {
             var font_desc = this.btn_font.get_font_desc();
             var backcolor = this.btn_backcolor.get_rgba();
-
+            var chars_no = int.parse(this.entry_search_char_no.get_text());
             /* store all prefer settings */
-            this.win.prefer_backcolor = backcolor;
-            this.win.prefer_font_desc = font_desc.copy();
-
+            //this.win.prefer_backcolor = backcolor;
+            //this.win.prefer_font_desc = font_desc.copy();
+            this.prefer.font_desc = font_desc.copy();
+            this.prefer.back_color = backcolor;
+            this.prefer.search_chars_no = chars_no;
+            print(@"$(this.prefer.search_chars_no)\n");
             update_page_prefer();
         }
 
         public void update_page_prefer () 
         {
             var settings = this.view.get_settings();
-            var font_desc = this.win.prefer_font_desc;
-            var backcolor = this.win.prefer_backcolor;
-
+            //var font_desc = this.win.prefer_font_desc;
+            //var backcolor = this.win.prefer_backcolor;
+            var font_desc = this.prefer.font_desc.copy();
+            var backcolor = this.prefer.back_color;
+            
             var font_size = font_desc.get_size();
             var font_family = font_desc.get_family();
-
+            //print(@"size:$(font_size)\n");
             settings.set_default_font_size(font_size/Pango.SCALE);
             settings.set_default_font_family(font_family);
 
@@ -379,7 +383,7 @@ namespace ManHelper
                 var regular_rgba = theme_CSS.regular_rgba;
                 var bold_rgba = theme_CSS.bold_rgba;
                 var italic_rgba = theme_CSS.italic_rgba;
-                
+
                 btn_title.set_rgba(title_rgba);
                 btn_heading.set_rgba(heading_rgba);
                 btn_regular.set_rgba(regular_rgba);
@@ -406,7 +410,8 @@ namespace ManHelper
         public int font_size;
         public string font_family;
         public Gdk.RGBA back_color;
-        public int search_chars_no {set;get;default=6;}
+        public int search_chars_no {set;get;default=6;} // Need fix; doestn't change in dialog
+        public Pango.FontDescription font_desc = null;
 
         public Preferences (MainWin win) 
         {
@@ -417,6 +422,11 @@ namespace ManHelper
             var default_font_size = settings.get_default_font_size();
             var default_font_family = settings.get_default_font_family(); /* just placeholder */
             var default_backcolor = view.get_background_color();
+
+            if (this.win.init_font_size==0)
+            {
+                this.win.init_font_size = default_font_size;
+            }
 
             try 
             {
@@ -434,6 +444,10 @@ namespace ManHelper
                     default_font_family = fc_output[1]; /* real default font faimly */
                     this.font_family = default_font_family;
                     //print(default_font_family+"\n");
+                    if (this.win.init_font_family == null)
+                    {
+                        this.win.init_font_family = default_font_family;
+                    }
                 }
             } 
             catch (SpawnError e) 
@@ -441,10 +455,14 @@ namespace ManHelper
                 message(e.message);
             }
 
-            var font_desc = new Pango.FontDescription();
-
-            font_desc.set_family(default_font_family);
-            font_desc.set_size((int)default_font_size*Pango.SCALE);
+            font_size = (int)default_font_size;
+            font_family= default_font_family;
+            font_desc = new Pango.FontDescription();
+            font_desc.set_family(font_family);
+            font_desc.set_size((int)font_size*Pango.SCALE);
+            
+            back_color = default_backcolor;
+            //print(@"size: $(font_size)\n");
         }
     }
 }

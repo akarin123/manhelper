@@ -110,5 +110,4 @@ namespace ManHelper
             this.win.prefer_font_desc.set_size(prefer_font_size);
         }
     }
-
 }
