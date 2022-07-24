@@ -57,6 +57,7 @@ namespace ManHelper
 
         internal string init_font_family = null;
         internal uint32 init_font_size = 0;
+        internal int search_chars_length = 0;
 
         internal MainWin (App app)
         {

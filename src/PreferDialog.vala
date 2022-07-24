@@ -112,6 +112,7 @@ namespace ManHelper
             btn_font.set_font_desc(prefer.font_desc);
             btn_backcolor.set_rgba(prefer.back_color);
             entry_search_char_no.set_text(prefer.search_chars_no.to_string());
+            //print(prefer.search_chars_no.to_string());
         }
 
         [GtkCallback]
@@ -166,7 +167,7 @@ namespace ManHelper
             this.prefer.font_desc = font_desc.copy();
             this.prefer.back_color = backcolor;
             this.prefer.search_chars_no = chars_no;
-            print(@"$(this.prefer.search_chars_no)\n");
+            this.win.search_chars_length = chars_no;
             update_page_prefer();
         }
 
@@ -410,7 +411,7 @@ namespace ManHelper
         public int font_size;
         public string font_family;
         public Gdk.RGBA back_color;
-        public int search_chars_no {set;get;default=6;} // Need fix; doestn't change in dialog
+        public int search_chars_no {set;get;default=6;}
         public Pango.FontDescription font_desc = null;
 
         public Preferences (MainWin win) 
@@ -463,6 +464,15 @@ namespace ManHelper
             
             back_color = default_backcolor;
             //print(@"size: $(font_size)\n");
+
+            if (this.win.search_chars_length==0) 
+            {
+                this.win.search_chars_length = search_chars_no;
+            }
+            else
+            {
+                search_chars_no = this.win.search_chars_length;
+            }
         }
     }
 }
