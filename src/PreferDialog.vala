@@ -53,6 +53,7 @@ namespace ManHelper
         }   
 
         /* load current settings to the preferences dialog */
+        /*
         private void prefer_load_settings (WebKit.Settings settings)
         {
             var default_font_size = settings.get_default_font_size();
@@ -101,6 +102,7 @@ namespace ManHelper
             
             btn_backcolor.set_rgba(default_backcolor);
         }
+        */
 
         public void init_preferences (Preferences prefer)
         {
@@ -136,7 +138,9 @@ namespace ManHelper
             Gdk.RGBA init_backcolor = {};
 
             var init_font_desc = new Pango.FontDescription();
-
+            var default_font_family = this.win.default_prefer.font_family;
+            var default_font_size = this.win.default_prefer.font_size;
+            /*
             if (this.win.init_font_family!=null)
             {
                 init_font_desc.set_family(this.win.init_font_family);
@@ -145,6 +149,16 @@ namespace ManHelper
             if (this.win.init_font_size>0)
             {
                 init_font_desc.set_size((int)this.win.init_font_size*Pango.SCALE);
+            }
+            */
+            if (default_font_family != null)
+            {
+                init_font_desc.set_family(default_font_family);
+            }
+
+            if (default_font_size > 0)
+            {
+                init_font_desc.set_size((int)default_font_size*Pango.SCALE);
             }
 
             btn_font.set_font_desc(init_font_desc);
@@ -188,7 +202,8 @@ namespace ManHelper
             /* update page zoomer */
             //print("pango font size:%d\n",font_size);
             double font_size_scaled = font_size/Pango.SCALE*1.0; /* ensure it is of double type */
-            this.win.page_zoomer.zoom_ratio = (int)Math.round(font_size_scaled/this.win.init_font_size*100);
+            // this.win.page_zoomer.zoom_ratio = (int)Math.round(font_size_scaled/this.win.init_font_size*100);
+            this.win.page_zoomer.zoom_ratio = (int)Math.round(font_size_scaled/this.win.prefer.font_size*100);
             this.win.page_zoomer.update_zoom_entry();
 
             this.view.set_background_color(backcolor);
@@ -407,16 +422,44 @@ namespace ManHelper
     public class Preferences
     {
         private MainWin win;
-        //WebKit.WebView view;
-        public int font_size;
-        public string font_family;
-        public Gdk.RGBA back_color;
+        private int _font_size;
+        private string _font_family;
+
+        public int font_size 
+        {   
+            get {return _font_size;}
+            set 
+            {
+                _font_size = value;
+
+                if (font_desc!=null)
+                {
+                    font_desc.set_size((int)font_size*Pango.SCALE);
+                }
+            }
+        }
+        public string font_family
+        {   
+            get {return _font_family;}
+            set 
+            {
+                _font_family = value;
+
+                if (font_desc!=null)
+                {
+                    font_desc.set_family(_font_family);
+                }
+            }
+        }
+        public Gdk.RGBA back_color {set;get;}
         public int search_chars_no {set;get;default=6;}
         public Pango.FontDescription font_desc = null;
 
         public Preferences (MainWin win) 
         {
             this.win = win;
+            this.win.prefer = this;
+
             var view = win.view_current;
             var settings = view.get_settings();
 
@@ -424,9 +467,13 @@ namespace ManHelper
             var default_font_family = settings.get_default_font_family(); /* just placeholder */
             var default_backcolor = view.get_background_color();
 
-            if (this.win.init_font_size==0)
+            /*if (this.win.init_font_size==0)
             {
                 this.win.init_font_size = default_font_size;
+            }*/
+            if (this.win.prefer.font_size == 0)
+            {
+                this.win.prefer.font_size = (int)default_font_size;
             }
 
             try 
@@ -445,9 +492,13 @@ namespace ManHelper
                     default_font_family = fc_output[1]; /* real default font faimly */
                     this.font_family = default_font_family;
                     //print(default_font_family+"\n");
-                    if (this.win.init_font_family == null)
+                    /*if (this.win.init_font_family == null)
                     {
                         this.win.init_font_family = default_font_family;
+                    }*/
+                    if (this.win.prefer.font_family == null)
+                    {
+                        this.win.prefer.font_family = default_font_family;
                     }
                 }
             } 

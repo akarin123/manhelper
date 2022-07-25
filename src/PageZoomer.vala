@@ -101,7 +101,8 @@ namespace ManHelper
             zoom_ratio = zoom_ratio_raw.clamp(PageZoomer.zoom_min,PageZoomer.zoom_max); /* update zoom ratio */
             ratio  = zoom_ratio/100.0;
             //print("ratio:%d\n", zoom_ratio);
-            font_size_new = (uint32)(Math.round(this.win.init_font_size*ratio));
+            // font_size_new = (uint32)(Math.round(this.win.init_font_size*ratio));
+            font_size_new = (uint32)(Math.round(this.win.prefer.font_size*ratio));
             //print("new font size:%f\n",font_size_new);
             settings.set_default_font_size(font_size_new);
             view.set_settings(settings);

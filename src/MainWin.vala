@@ -55,9 +55,11 @@ namespace ManHelper
         [GtkChild]
         private unowned Gtk.CheckButton btn_enable_search;
 
-        internal string init_font_family = null;
-        internal uint32 init_font_size = 0;
+        // internal string init_font_family = null;
+        // internal uint32 init_font_size = 0;
         internal int search_chars_length = 0;
+        internal Preferences default_prefer = null;
+        internal Preferences prefer = null;
 
         internal MainWin (App app)
         {
@@ -88,7 +90,9 @@ namespace ManHelper
 
             var prefer_dialog = new PreferDialog(this); /* init font size and family */
             prefer_dialog.load_startup_options(app);
-            
+            this.default_prefer = new Preferences(this);
+            this.prefer = new Preferences(this);
+
             this.prefer_font_desc = prefer_dialog.btn_font.get_font_desc();
             this.prefer_backcolor = prefer_dialog.btn_backcolor.get_rgba();
             prefer_dialog.hide();
