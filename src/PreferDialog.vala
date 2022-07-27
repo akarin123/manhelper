@@ -424,6 +424,7 @@ namespace ManHelper
         private MainWin win;
         private int _font_size;
         private string _font_family;
+        private Pango.FontDescription _font_desc; 
 
         public int font_size 
         {   
@@ -451,9 +452,26 @@ namespace ManHelper
                 }
             }
         }
+        public Pango.FontDescription font_desc 
+        {
+            get 
+            {
+                _font_desc = new Pango.FontDescription();
+                _font_desc.set_family(font_family);
+                _font_desc.set_size((int)font_size*Pango.SCALE);
+                return _font_desc;
+            }
+            set
+            {
+                _font_desc = value.copy();
+                _font_family = _font_desc.get_family();
+                _font_size = _font_desc.get_size()/Pango.SCALE;
+            }
+        }
+
         public Gdk.RGBA back_color {set;get;}
-        public int search_chars_no {set;get;default=6;}
-        public Pango.FontDescription font_desc = null;
+        private const int search_chars_no_default = 6;
+        public int search_chars_no {set;get;default=search_chars_no_default;}
 
         public Preferences (MainWin win) 
         {
@@ -509,9 +527,9 @@ namespace ManHelper
 
             font_size = (int)default_font_size;
             font_family= default_font_family;
-            font_desc = new Pango.FontDescription();
-            font_desc.set_family(font_family);
-            font_desc.set_size((int)font_size*Pango.SCALE);
+            //font_desc = new Pango.FontDescription();
+            //font_desc.set_family(font_family);
+            //font_desc.set_size((int)font_size*Pango.SCALE);
             
             back_color = default_backcolor;
             //print(@"size: $(font_size)\n");

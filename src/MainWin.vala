@@ -208,7 +208,7 @@ namespace ManHelper
         private void on_entry_search_changed (Gtk.SearchEntry self)
         {
             string text = self.get_text();
-            int long_search_char = this.prefer_dialog.prefer.search_chars_no;
+            int long_search_char = this.prefer.search_chars_no;
             //print(@"long:$(long_search_char)\n");
             bool enable_search = btn_enable_search.get_active();
             KeywordList old_list;
