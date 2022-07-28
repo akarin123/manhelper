@@ -37,9 +37,9 @@ namespace ManHelper
         internal WebKit.WebView view_current = null; 
         internal PageZoomer page_zoomer = null;
         internal PreferDialog prefer_dialog = null;
-        internal Pango.FontDescription prefer_font_desc = null;
+        //internal Pango.FontDescription prefer_font_desc = null;
         internal ThemeCSS prefer_theme_CSS = null;
-        internal Gdk.RGBA prefer_backcolor = {};
+        //internal Gdk.RGBA prefer_backcolor = {};
 
         [GtkChild]
         private unowned Gtk.Button btn_man;
@@ -55,9 +55,7 @@ namespace ManHelper
         [GtkChild]
         private unowned Gtk.CheckButton btn_enable_search;
 
-        // internal string init_font_family = null;
-        // internal uint32 init_font_size = 0;
-        internal int search_chars_length = 0;
+        //internal int search_chars_length = 0;
         internal Preferences default_prefer = null;
         internal Preferences prefer = null;
 
@@ -93,8 +91,8 @@ namespace ManHelper
             this.default_prefer = new Preferences(this);
             this.prefer = new Preferences(this);
 
-            this.prefer_font_desc = prefer_dialog.btn_font.get_font_desc();
-            this.prefer_backcolor = prefer_dialog.btn_backcolor.get_rgba();
+            //this.prefer_font_desc = prefer_dialog.btn_font.get_font_desc();
+            //this.prefer_backcolor = prefer_dialog.btn_backcolor.get_rgba();
             prefer_dialog.hide();
             //this.theme_CSS = new ThemeCSS();
         }
@@ -208,7 +206,7 @@ namespace ManHelper
         private void on_entry_search_changed (Gtk.SearchEntry self)
         {
             string text = self.get_text();
-            int long_search_char = this.prefer.search_chars_no;
+            int long_search_char = this.prefer.search_char_no;
             //print(@"long:$(long_search_char)\n");
             bool enable_search = btn_enable_search.get_active();
             KeywordList old_list;

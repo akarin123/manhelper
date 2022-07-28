@@ -108,7 +108,8 @@ namespace ManHelper
             view.set_settings(settings);
 
             int prefer_font_size = (int)(font_size_new*Pango.SCALE);
-            this.win.prefer_font_desc.set_size(prefer_font_size);
+            //this.win.prefer_font_desc.set_size(prefer_font_size);
+            this.win.prefer.font_desc.set_size(prefer_font_size);
         }
     }
 }

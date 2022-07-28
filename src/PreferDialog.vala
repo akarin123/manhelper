@@ -45,12 +45,13 @@ namespace ManHelper
             this.win = win;
             this.view = win.view_current;
             
-            this.prefer = new Preferences(win);
-            var settings = view.get_settings();
+            this.prefer = win.prefer ?? new Preferences(win);
+            //var settings = view.get_settings();
             //prefer_load_settings(settings);
-            init_preferences (this.prefer);
+            init_preferdialog(this.prefer);
+            win.prefer = this.prefer;
             //this.default_font_size = settings.get_default_font_size();
-        }   
+        }
 
         /* load current settings to the preferences dialog */
         /*
@@ -104,17 +105,12 @@ namespace ManHelper
         }
         */
 
-        public void init_preferences (Preferences prefer)
+        public void init_preferdialog (Preferences prefer)
         {
-            /*var font_desc = new Pango.FontDescription();
-            print(@"$(prefer.font_size)"+"\n");
-            font_desc.set_family(prefer.font_family);
-            font_desc.set_size((int)prefer.font_size*Pango.SCALE);*/
-
             btn_font.set_font_desc(prefer.font_desc);
             btn_backcolor.set_rgba(prefer.back_color);
-            entry_search_char_no.set_text(prefer.search_chars_no.to_string());
-            //print(prefer.search_chars_no.to_string());
+            entry_search_char_no.set_text(prefer.search_char_no.to_string());
+            //print(prefer.search_char_no.to_string());
         }
 
         [GtkCallback]
@@ -140,22 +136,12 @@ namespace ManHelper
             var init_font_desc = new Pango.FontDescription();
             var default_font_family = this.win.default_prefer.font_family;
             var default_font_size = this.win.default_prefer.font_size;
-            /*
-            if (this.win.init_font_family!=null)
-            {
-                init_font_desc.set_family(this.win.init_font_family);
-            }
 
-            if (this.win.init_font_size>0)
-            {
-                init_font_desc.set_size((int)this.win.init_font_size*Pango.SCALE);
-            }
-            */
+            /* Set init font and size to default preferences */
             if (default_font_family != null)
             {
                 init_font_desc.set_family(default_font_family);
             }
-
             if (default_font_size > 0)
             {
                 init_font_desc.set_size((int)default_font_size*Pango.SCALE);
@@ -165,7 +151,7 @@ namespace ManHelper
 
             init_backcolor.parse("rgb(255,255,255)"); /* back to white */
             btn_backcolor.set_rgba(init_backcolor);
-            entry_search_char_no.set_text("6");
+            entry_search_char_no.set_text(Preferences.search_char_no_default.to_string());
             btn_apply.clicked();
         }
 
@@ -174,14 +160,12 @@ namespace ManHelper
         {
             var font_desc = this.btn_font.get_font_desc();
             var backcolor = this.btn_backcolor.get_rgba();
-            var chars_no = int.parse(this.entry_search_char_no.get_text());
-            /* store all prefer settings */
-            //this.win.prefer_backcolor = backcolor;
-            //this.win.prefer_font_desc = font_desc.copy();
+            var char_no = int.parse(this.entry_search_char_no.get_text());
+            /* Store all prefer settings */
             this.prefer.font_desc = font_desc.copy();
             this.prefer.back_color = backcolor;
-            this.prefer.search_chars_no = chars_no;
-            this.win.search_chars_length = chars_no;
+            this.prefer.search_char_no = char_no;
+            //this.win.search_chars_length = chars_no;
             update_page_prefer();
         }
 
@@ -199,8 +183,7 @@ namespace ManHelper
             settings.set_default_font_size(font_size/Pango.SCALE);
             settings.set_default_font_family(font_family);
 
-            /* update page zoomer */
-            //print("pango font size:%d\n",font_size);
+            /* Update page zoomer */
             double font_size_scaled = font_size/Pango.SCALE*1.0; /* ensure it is of double type */
             // this.win.page_zoomer.zoom_ratio = (int)Math.round(font_size_scaled/this.win.init_font_size*100);
             this.win.page_zoomer.zoom_ratio = (int)Math.round(font_size_scaled/this.win.prefer.font_size*100);
@@ -208,7 +191,7 @@ namespace ManHelper
 
             this.view.set_background_color(backcolor);
 
-            /* check whether change startup options */
+            /* Check whether change startup options */
             if (btn_startup.get_active())
             {
                 App app = this.win.app;
@@ -230,6 +213,7 @@ namespace ManHelper
             var font_size = font_desc.get_size();
             var font_family = font_desc.get_family();
             var backcolor = this.btn_backcolor.get_rgba();
+            var search_char_no = this.entry_search_char_no.get_text();
 
             builder.begin_object ();
             builder.set_member_name ("font-family");
@@ -240,6 +224,9 @@ namespace ManHelper
 
             builder.set_member_name ("background");
             builder.add_string_value (backcolor.to_string());
+
+            builder.set_member_name ("search-char-no");
+            builder.add_string_value (search_char_no.to_string());
 
             var theme_CSS = this.win.prefer_theme_CSS;
             if (theme_CSS == null)
@@ -271,7 +258,6 @@ namespace ManHelper
                 builder.add_string_value (theme_CSS.italic_rgba.to_string());
             }
 
-
             builder.end_object ();
             
             var generator = new Json.Generator();
@@ -279,11 +265,10 @@ namespace ManHelper
 
             generator.set_root(root);
 
-            /* store in the same directory with bookmarks */
+            /* Store in the same directory with bookmarks */
             var bookmarks_dirpath = app.bookmarks_parent_dir+app.bookmarks_directory;
             var startup_filepath = Path.build_filename(bookmarks_dirpath,app.startup_filename);
-            
-            //print(startup_filepath+"\n");
+
             try
             {
                 generator.to_file(startup_filepath);
@@ -313,7 +298,9 @@ namespace ManHelper
                     var font_family = obj.get_member("font-family").get_string();
                     var font_size_str = obj.get_member("font-size").get_string();
                     var backcolor_str = obj.get_member("background").get_string();
+                    var search_char_no_str = obj.get_member("search-char-no").get_string();
                     //print("%s\n%s\n%s\n",font_family,font_size,backcolor);
+                    //print("search: %s\n",search_char_no_str);
                     var font_size = int.parse(font_size_str);
 
                     var font_desc = new Pango.FontDescription();
@@ -326,7 +313,9 @@ namespace ManHelper
                     backcolor.parse(backcolor_str);
                     btn_backcolor.set_rgba(backcolor);
                     
-                    /* load theme colors */
+                    entry_search_char_no.set_text(search_char_no_str);
+
+                    /* Load theme colors */
                     var theme_title_str = obj.get_member("theme-title").get_string();
                     var theme_heading_str = obj.get_member("theme-heading").get_string();
                     var theme_regular_str = obj.get_member("theme-regular").get_string();
@@ -335,7 +324,6 @@ namespace ManHelper
                     //print("%p\n",this.win.theme_CSS);
                     if (this.win.prefer_theme_CSS == null)
                     {
-                        //print("new themeCSS here!");
                         var startup_theme_CSS = new ThemeCSS();
                         startup_theme_CSS.prefer_dialog = this;
                         startup_theme_CSS.title_rgba.parse(theme_title_str);
@@ -346,7 +334,6 @@ namespace ManHelper
                         
                         this.win.prefer_theme_CSS = startup_theme_CSS;
                     }
-                    //print("apply here!");
                     btn_apply.clicked();
                 }
                 catch (Error e)
@@ -361,7 +348,7 @@ namespace ManHelper
         }
     }
 
-    /*Add text color theme dialog*/
+    /* Add text color theme dialog */
     [GtkTemplate (ui = "/ui/theme_dialog.ui")]
     internal class ThemeDialog: Gtk.Dialog
     {
@@ -470,13 +457,13 @@ namespace ManHelper
         }
 
         public Gdk.RGBA back_color {set;get;}
-        private const int search_chars_no_default = 6;
-        public int search_chars_no {set;get;default=search_chars_no_default;}
+        public static int search_char_no_default = 6;
+        public int search_char_no {set;get;}
 
         public Preferences (MainWin win) 
         {
             this.win = win;
-            this.win.prefer = this;
+            //this.win.prefer = this;
 
             var view = win.view_current;
             var settings = view.get_settings();
@@ -484,15 +471,12 @@ namespace ManHelper
             var default_font_size = settings.get_default_font_size();
             var default_font_family = settings.get_default_font_family(); /* just placeholder */
             var default_backcolor = view.get_background_color();
-
-            /*if (this.win.init_font_size==0)
-            {
-                this.win.init_font_size = default_font_size;
-            }*/
+            
+            /* Get font size from webview if necessary 
             if (this.win.prefer.font_size == 0)
             {
                 this.win.prefer.font_size = (int)default_font_size;
-            }
+            }*/
 
             try 
             {
@@ -507,17 +491,15 @@ namespace ManHelper
 
                 if (fc_output.length > 1)
                 {
-                    default_font_family = fc_output[1]; /* real default font faimly */
+                    default_font_family = fc_output[1]; /* Real default font faimly */
                     this.font_family = default_font_family;
                     //print(default_font_family+"\n");
-                    /*if (this.win.init_font_family == null)
-                    {
-                        this.win.init_font_family = default_font_family;
-                    }*/
+                    
+                    /* Get font faimly from webview if necessary 
                     if (this.win.prefer.font_family == null)
                     {
                         this.win.prefer.font_family = default_font_family;
-                    }
+                    }*/
                 }
             } 
             catch (SpawnError e) 
@@ -525,15 +507,13 @@ namespace ManHelper
                 message(e.message);
             }
 
+            /* Get preferences from webview */
             font_size = (int)default_font_size;
             font_family= default_font_family;
-            //font_desc = new Pango.FontDescription();
-            //font_desc.set_family(font_family);
-            //font_desc.set_size((int)font_size*Pango.SCALE);
-            
             back_color = default_backcolor;
-            //print(@"size: $(font_size)\n");
-
+            search_char_no = search_char_no_default;
+            
+            /*
             if (this.win.search_chars_length==0) 
             {
                 this.win.search_chars_length = search_chars_no;
@@ -541,7 +521,7 @@ namespace ManHelper
             else
             {
                 search_chars_no = this.win.search_chars_length;
-            }
+            }*/
         }
     }
 }
